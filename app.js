@@ -1046,8 +1046,27 @@ function resumeSession(id) {
   headerTitle.textContent = session.title;
   historyBtn.style.display = 'none';
 
+  // navState 복원: 마지막 유저 메시지로 카테고리 추론
+  navState = { userType: '구직자', category: null };
+  const userMsgs = session.messages.filter(m => m.type === 'user');
+  if (userMsgs.length > 0) {
+    const lastUserText = userMsgs[userMsgs.length - 1].text;
+    const matchedQ = findQuestionObj(lastUserText);
+    if (matchedQ) {
+      // 해당 질문이 속한 카테고리 찾기
+      for (const [ut, utData] of Object.entries(FAQ_TREE)) {
+        for (const [catName, catData] of Object.entries(utData.categories)) {
+          if (catData.questions.some(q => q.question === lastUserText)) {
+            navState = { userType: ut, category: catName };
+          }
+        }
+      }
+    }
+  }
+
   switchTab('chat');
   hideInput();
+  showPostAnswerChips();
   scrollBottom();
 }
 
