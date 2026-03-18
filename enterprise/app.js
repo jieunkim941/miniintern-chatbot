@@ -151,7 +151,7 @@ function addBotMsg(text, delay = 600, showThinking = false) {
       const loader = document.createElement('div');
       loader.className = 'msg-row';
       loader.innerHTML = `
-        <div class="msg-avatar"><img src="../mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+        <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
         <div class="msg-bubble bot loading-bubble">
           <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
         </div>`;
@@ -163,7 +163,7 @@ function addBotMsg(text, delay = 600, showThinking = false) {
         const row = document.createElement('div');
         row.className = 'msg-row';
         row.innerHTML = `
-          <div class="msg-avatar"><img src="../mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+          <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
           <div class="msg-bubble bot">${text}</div>`;
         chatBody.appendChild(row);
         messageLog.push({ type: 'bot', text });
@@ -176,7 +176,7 @@ function addBotMsg(text, delay = 600, showThinking = false) {
     const typing = document.createElement('div');
     typing.className = 'msg-row';
     typing.innerHTML = `
-      <div class="msg-avatar"><img src="../mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+      <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
       <div class="thinking-indicator">
         <div class="thinking-step active">
           <span class="step-text">${THINKING_STEPS[0]}</span>
@@ -211,7 +211,7 @@ function addBotMsg(text, delay = 600, showThinking = false) {
       const row = document.createElement('div');
       row.className = 'msg-row';
       row.innerHTML = `
-        <div class="msg-avatar"><img src="../mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+        <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
         <div class="msg-bubble bot">${text}</div>`;
       chatBody.appendChild(row);
       messageLog.push({ type: 'bot', text });
@@ -256,7 +256,7 @@ function addDevComment(comment) {
   const row = document.createElement('div');
   row.className = 'msg-row';
   row.innerHTML = `
-    <div class="msg-avatar" style="visibility:hidden;"><img src="../mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+    <div class="msg-avatar" style="visibility:hidden;"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
     <div class="dev-comment">
       <span class="dev-comment-label">DEV</span>
       <span>${comment}</span>
@@ -286,7 +286,7 @@ async function renderAnswer(questionObj, showThinking = false) {
 // ===== Bot message with image placeholder =====
 function addBotMsgWithImage(text, imagePlaceholder, delay = 600, showThinking = false) {
   const bubbleHTML = `
-    <div class="msg-avatar"><img src="../mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+    <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
     <div class="msg-bubble bot bubble-with-image">
       <div class="bubble-text">${text}</div>
       <div class="image-placeholder">
@@ -300,7 +300,7 @@ function addBotMsgWithImage(text, imagePlaceholder, delay = 600, showThinking = 
       const loader = document.createElement('div');
       loader.className = 'msg-row';
       loader.innerHTML = `
-        <div class="msg-avatar"><img src="../mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+        <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
         <div class="msg-bubble bot loading-bubble">
           <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
         </div>`;
@@ -323,7 +323,7 @@ function addBotMsgWithImage(text, imagePlaceholder, delay = 600, showThinking = 
     const typing = document.createElement('div');
     typing.className = 'msg-row';
     typing.innerHTML = `
-      <div class="msg-avatar"><img src="../mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+      <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
       <div class="thinking-indicator">
         <div class="thinking-step active">
           <span class="step-text">${THINKING_STEPS[0]}</span>
@@ -371,7 +371,7 @@ function addCsCard() {
   const row = document.createElement('div');
   row.className = 'msg-row';
   row.innerHTML = `
-    <div class="msg-avatar"><img src="../mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+    <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
     <div class="cs-card">
       <div class="cs-card-header">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"/></svg>
@@ -397,7 +397,7 @@ function addContactCard() {
   const row = document.createElement('div');
   row.className = 'msg-row';
   row.innerHTML = `
-    <div class="msg-avatar"><img src="../mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+    <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
     <div class="contact-card">
       <div class="contact-card-header">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"/></svg>
@@ -869,7 +869,7 @@ function resumeSession(id) {
       const row = document.createElement('div');
       row.className = 'msg-row';
       row.innerHTML = `
-        <div class="msg-avatar"><img src="../mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+        <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
         <div class="msg-bubble bot">${msg.text}</div>`;
       chatBody.appendChild(row);
     } else if (msg.type === 'user') {
