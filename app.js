@@ -97,7 +97,18 @@ const THINKING_STEPS = ['답변 생각 중', '추론 중', '답변 검토 중'];
 function addBotMsg(text, delay = 600, showThinking = false) {
   return new Promise(resolve => {
     if (!showThinking) {
+      const loader = document.createElement('div');
+      loader.className = 'msg-row';
+      loader.innerHTML = `
+        <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+        <div class="msg-bubble bot loading-bubble">
+          <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
+        </div>`;
+      chatBody.appendChild(loader);
+      scrollBottom();
+
       setTimeout(() => {
+        loader.remove();
         const row = document.createElement('div');
         row.className = 'msg-row';
         row.innerHTML = `
@@ -115,24 +126,36 @@ function addBotMsg(text, delay = 600, showThinking = false) {
     typing.className = 'msg-row';
     typing.innerHTML = `
       <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
-      <div class="typing-indicator">
-        <div class="typing-status">${THINKING_STEPS[0]}</div>
-        <div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+      <div class="thinking-indicator">
+        <div class="thinking-step active">
+          <span class="step-text">${THINKING_STEPS[0]}</span>
+          <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
+        </div>
       </div>`;
     chatBody.appendChild(typing);
     scrollBottom();
 
-    const statusEl = typing.querySelector('.typing-status');
+    const stepEl = typing.querySelector('.thinking-step');
+    const textEl = stepEl.querySelector('.step-text');
     let step = 0;
     const stepInterval = setInterval(() => {
       step++;
       if (step < THINKING_STEPS.length) {
-        statusEl.textContent = THINKING_STEPS[step];
+        stepEl.classList.remove('active');
+        stepEl.classList.add('done');
+        setTimeout(() => {
+          stepEl.classList.remove('done');
+          stepEl.classList.add('active');
+          textEl.textContent = THINKING_STEPS[step];
+        }, 500);
+      } else {
+        clearInterval(stepInterval);
+        stepEl.classList.remove('active');
+        stepEl.classList.add('done');
       }
     }, 1000);
 
     setTimeout(() => {
-      clearInterval(stepInterval);
       typing.remove();
       const row = document.createElement('div');
       row.className = 'msg-row';
@@ -143,7 +166,7 @@ function addBotMsg(text, delay = 600, showThinking = false) {
       messageLog.push({ type: 'bot', text });
       scrollBottom();
       resolve();
-    }, 3000);
+    }, 3500);
   });
 }
 
@@ -218,18 +241,18 @@ function sendMessage() {
   document.getElementById('sendBtn').disabled = true;
   chatBody.querySelectorAll('.quick-replies').forEach(el => el.remove());
   addUserMsg(text);
-  handleUserInput(text);
+  handleUserInput(text, true);
 }
 
 // ===== Handle user input =====
-async function handleUserInput(text) {
+async function handleUserInput(text, showThinking = false) {
   const faq = findFaqAnswer(text);
 
   if (faq) {
-    await addBotMsg(faq.answer, 600, true);
+    await addBotMsg(faq.answer, 600, showThinking);
   } else {
     const fallback = getFallbackAnswer(text);
-    await addBotMsg(fallback, 600, true);
+    await addBotMsg(fallback, 600, showThinking);
   }
   await addBotMsg('다른 궁금한 점이 있으신가요?');
   addQuickReplies(['미니인턴은 무료인가요?', '문의는 어디로 하나요?', '해피폴리오가 뭔가요?'], handleUserInput);

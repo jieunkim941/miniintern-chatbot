@@ -292,7 +292,7 @@ body {
 }
 .msg-bubble.bot {
   background: var(--white);
-  border: 1px solid var(--gray-400);
+  border: 1px solid var(--gray-300);
   border-top-left-radius: 4px;
 }
 .msg-bubble.user {
@@ -302,40 +302,95 @@ body {
 }
 
 
-/* ===== Typing Indicator ===== */
-.typing-indicator {
+/* ===== AI Thinking Indicator ===== */
+.thinking-indicator {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 14px 18px 14px 16px;
+  background: linear-gradient(135deg, var(--white) 0%, var(--blue-100) 100%);
+  border: 1px solid rgba(23, 161, 255, 0.15);
+  border-radius: var(--radius-lg);
+  border-top-left-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  min-width: 200px;
+}
+.thinking-indicator::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(23, 161, 255, 0.06), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.thinking-step {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
-  background: var(--white);
-  border: 1px solid var(--gray-400);
-  border-radius: var(--radius-lg);
-  border-top-left-radius: 4px;
-}
-.typing-status {
   font-size: 13px;
-  color: var(--gray-600);
-  white-space: nowrap;
-  animation: fadeInStatus 0.3s ease;
+  color: var(--gray-400);
+  transition: color 0.4s ease, transform 0.3s ease;
 }
-.typing-dots {
+.thinking-step.active {
+  color: var(--gray-800);
+  transform: translateX(2px);
+}
+.thinking-step.done {
+  color: var(--blue-500);
+}
+
+
+.step-text {
+  white-space: nowrap;
+}
+
+.loading-bubble {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 12px 18px;
+}
+.loading-bubble .thinking-dots {
+  gap: 5px;
+}
+.loading-bubble .thinking-dot {
+  width: 6px;
+  height: 6px;
+}
+
+.thinking-dots {
   display: flex;
   gap: 3px;
+  align-items: center;
 }
-.typing-dot {
+.thinking-dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--gray-400);
-  animation: typingBounce 1.2s infinite;
+  background: var(--blue-500);
+  opacity: 0.4;
+  animation: thinkingBounce 1.2s infinite;
 }
-.typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+.thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+.thinking-step.done .thinking-dots { display: none; }
 
+@keyframes thinkingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
+  30%           { transform: translateY(-5px); opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { left: -100%; }
+  100% { left: 100%; }
+}
 @keyframes fadeInStatus {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 
@@ -476,8 +531,4 @@ body {
 @keyframes msgIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes typingBounce {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-  30%           { transform: translateY(-6px); opacity: 1; }
 }
