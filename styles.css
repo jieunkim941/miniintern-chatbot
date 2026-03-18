@@ -394,6 +394,60 @@ body {
 }
 
 
+/* ===== Image inside Bubble ===== */
+.bubble-with-image {
+  padding: 0;
+  overflow: hidden;
+}
+.bubble-with-image .bubble-text {
+  padding: 12px 16px;
+}
+.image-placeholder {
+  width: 100%;
+  height: 140px;
+  background: var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--gray-600);
+  font-size: 12px;
+  text-align: center;
+  padding: 16px;
+  line-height: 1.5;
+  border-top: 1px solid var(--gray-300);
+}
+.image-placeholder svg {
+  color: var(--gray-400);
+}
+
+/* ===== Dev Comment (개발자 참고용) ===== */
+.dev-comment {
+  background: #FFF8E1;
+  border: 1px dashed var(--orange-500);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--gray-700);
+  max-width: 260px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  line-height: 1.5;
+  animation: msgIn 0.3s ease;
+}
+.dev-comment-label {
+  background: var(--orange-500);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 /* ===== CS Card ===== */
 .cs-card {
   background: var(--white);

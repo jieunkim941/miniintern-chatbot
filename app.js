@@ -10,82 +10,278 @@ const inputBar = document.querySelector('.input-bar');
 let messageLog = [];
 let currentTab = 'chat';
 let csInquiryMode = false;
+let navState = { userType: null, category: null };
 
-// ===== FAQ Data =====
-const FAQ_DATA = [
-  {
-    keywords: ['뭐', '뭔', '무엇', '어떤', '서비스', '소개'],
-    question: '미니인턴이 뭔가요?',
-    answer: '미니인턴은 2013년부터 시작된 <b>실무역량 중심의 채용 플랫폼</b>이에요.<br><br>구직자가 기업의 과제를 수행하여 실무 경험을 쌓고, 현직자 멘토링과 수료평가까지 받을 수 있는 실무역량강화 교육입니다.<br><br>이력서가 아닌 <b>과제 결과물로 실무역량을 평가</b>받고 건강한 취업을 이뤄보세요!'
+// =============================================================
+//  FAQ Tree — 시나리오 기반 데이터
+//  ※ 동적 정보 조회형: 날짜는 샘플 데이터입니다.
+//    실제 서비스에서는 어드민 API를 통해 기수별 날짜를 조회해야 합니다.
+//    필드: {제출마감일}, {중간피드백일}, {결과발표일}
+// =============================================================
+const FAQ_TREE = {
+  '구직자': {
+    label: '구직자 (취준생)',
+    categories: {
+      '신청·참여': {
+        questions: [
+          {
+            question: '여러 프로그램에 동시 신청할 수 있나요?',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>복수의 프로그램에 동시 신청이 가능합니다!<br>단, 각 프로그램 일정이 겹치지 않는지 확인 후 신청해 주시기 바랍니다.<br><br>감사합니다.',
+            keywords: ['동시', '여러', '복수', '중복', '신청']
+          },
+          {
+            question: '미니인턴 신청 방법을 모르겠어요',
+            answerType: 'image',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>① miniintern.com 접속 ><br>② 원하는 프로그램 선택 ><br>③ [신청하기] 클릭 ><br>④ 신청서 작성 및 제출<br><br>순서로 진행하시면 됩니다.<br><br>감사합니다.',
+            imagePlaceholder: '신청 화면 단계별 안내 스크린샷',
+            keywords: ['신청', '방법', '어떻게', '지원']
+          }
+        ]
+      },
+      '과제': {
+        questions: [
+          {
+            question: '과제를 중도에 그만두면 어떻게 되나요?',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>중도 포기 시 수료증 발급이 불가하며, 해당 프로그램 참여 이력이 남지 않을 수 있습니다.<br>불가피한 사정이 있으시면 운영팀으로 별도 연락 부탁드립니다.<br><br>감사합니다.',
+            keywords: ['중도', '포기', '그만', '취소']
+          },
+          {
+            question: '기획안 파일 형식(PDF, PPT 등)이 정해져 있나요?',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>파일 형식은 PDF 또는 PPT(PPTX) 중 자유롭게 선택하여 제출해 주시면 됩니다!<br><br>감사합니다.',
+            keywords: ['파일', '형식', 'pdf', 'ppt', '제출']
+          },
+          {
+            question: '기업 내부 자료는 어디서 확인할 수 있나요?',
+            answerType: 'image',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>기업 내부 자료는 신청 페이지 내 [자료실] 탭에서 확인하실 수 있습니다.<br><br>감사합니다.',
+            imagePlaceholder: '자료실 탭 위치 안내 스크린샷',
+            keywords: ['내부', '자료', '자료실', '기업']
+          },
+          {
+            question: '기획안 분량(페이지 수)은 정해져 있나요?',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>기획안 분량은 별도로 정해져 있지 않으며, 과제 내용을 충실히 담을 수 있는 분량으로 자유롭게 작성해 주시면 됩니다!<br><br>감사합니다.',
+            keywords: ['분량', '페이지', '몇장', '몇 장']
+          }
+        ]
+      },
+      '수료·증명': {
+        questions: [
+          {
+            question: '경력증명서도 발급 가능한가요?',
+            answerType: 'contact',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>수료증은 마이페이지에서 자체 발급 가능하나, 경력증명서는 운영팀에 별도 요청해 주셔야 합니다.<br>아래 채널로 문의해 주세요.<br><br>감사합니다.',
+            keywords: ['경력', '증명서', '경력증명']
+          },
+          {
+            question: '수료증은 어떻게 발급받나요?',
+            answerType: 'image',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>수료 후 마이페이지 > 수료증 탭에서 직접 출력 및 다운로드 가능합니다.<br><br>감사합니다.',
+            imagePlaceholder: '마이페이지 수료증 탭 위치 안내 스크린샷',
+            keywords: ['수료증', '발급', '출력', '다운']
+          },
+          {
+            question: '수료 조건이 어떻게 되나요?',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>정해진 기한 내 최종 결과물을 제출하시면 수료 처리됩니다.<br>제출 기한은 [일정 > 최종 제출 기한]에서 확인하세요!<br><br>감사합니다.',
+            keywords: ['수료', '조건', '기준']
+          }
+        ]
+      },
+      '계정·프로필': {
+        questions: [
+          {
+            question: '이력서는 어디서 등록하나요?',
+            answerType: 'image',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>마이페이지 > 이력서 탭에서 등록 및 수정하실 수 있습니다.<br><br>감사합니다.',
+            imagePlaceholder: '마이페이지 이력서 탭 위치 안내 스크린샷',
+            keywords: ['이력서', '등록', '프로필']
+          },
+          {
+            question: '비밀번호를 잊어버렸어요',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>로그인 화면 > [비밀번호 찾기] 클릭 > 가입하신 이메일 주소로 재설정 링크가 발송됩니다.<br><br>감사합니다.',
+            keywords: ['비밀번호', '패스워드', '로그인', '잊어']
+          }
+        ]
+      },
+      '일정': {
+        questions: [
+          {
+            // ※ 동적 정보: {제출마감일} → 실제 서비스에서는 API 조회 필요
+            question: '최종 결과물 제출 기한이 언제예요?',
+            answerType: 'dynamic',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>최종 결과물 제출 기한은 <b>3월 28일(금)</b> 오후 6시까지입니다.<br>기한 내 제출 부탁드립니다!<br><br>감사합니다.',
+            devComment: '[동적 정보] 실제 값은 어드민 API에서 기수별 "제출마감일" 필드를 조회하여 삽입. 포맷: M월 D일(요일)',
+            keywords: ['제출', '기한', '마감', '최종', '언제']
+          },
+          {
+            // ※ 동적 정보: {중간피드백일} → 실제 서비스에서는 API 조회 필요
+            question: '중간 피드백은 언제 올라오나요?',
+            answerType: 'dynamic',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>중간 피드백은 <b>3월 21일(금)</b> 오후 6시 이전 업로드 예정이며, 업로드 후 추가로 안내 연락을 드리고 있으니 참고 부탁드립니다.<br><br>감사합니다.',
+            devComment: '[동적 정보] 실제 값은 어드민 API에서 기수별 "중간피드백일" 필드를 조회하여 삽입. 포맷: M월 D일(요일)',
+            keywords: ['중간', '피드백', '멘토링']
+          },
+          {
+            // ※ 동적 정보: {결과발표일} → 실제 서비스에서는 API 조회 필요
+            question: '선발 결과는 언제 알 수 있나요?',
+            answerType: 'dynamic',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>선발 결과는 <b>3월 14일(금)</b> 오후 6시 이전에 개별적으로 안내드리고 있습니다.<br>미선발의 경우에도 개별적으로 연락드리고 있으니, 참고 부탁드립니다!<br><br>감사합니다.',
+            devComment: '[동적 정보] 실제 값은 어드민 API에서 기수별 "결과발표일" 필드를 조회하여 삽입. 포맷: M월 D일(요일)',
+            keywords: ['선발', '결과', '합격', '발표']
+          }
+        ]
+      },
+      '취업 연계': {
+        questions: [
+          {
+            question: '취업성과금은 어떻게 받나요?',
+            answerType: 'contact',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>미니인턴을 통해 취업에 성공하신 경우, 운영팀으로 연락 주시면 취업성과금 지급 절차를 안내드립니다.<br><br>감사합니다.',
+            keywords: ['성과금', '취업', '연계', '보상']
+          }
+        ]
+      },
+      '해피폴리오·콘텐츠': {
+        questions: [
+          {
+            question: '구매한 콘텐츠는 어디에서 다운받을 수 있나요?',
+            answerType: 'image',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>[마이 커리어] - 해피폴리오 [구매 내역]에서 다운받으실 수 있습니다.<br><br>감사합니다.',
+            imagePlaceholder: '마이 커리어 > 구매 내역 탭 위치 안내 스크린샷',
+            keywords: ['구매', '다운', '콘텐츠', '어디']
+          },
+          {
+            question: '구매한 콘텐츠를 환불하고 싶어요',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>해피폴리오는 디지털 콘텐츠 특성상 구매 후 환불이 불가합니다.<br>구매 전 콘텐츠 소개 페이지를 충분히 확인해 주시기 바랍니다.<br><br>감사합니다.',
+            keywords: ['환불', '취소', '반품']
+          },
+          {
+            question: '구매한 콘텐츠는 언제까지 이용할 수 있나요?',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>구매 후 평생 이용 가능합니다.<br>단, Notion 링크로 제공되는 콘텐츠는 저자의 운영 정책에 따라 변경될 수 있습니다.<br>필요한 경우 콘텐츠 내 안내된 방법에 따라 미리 저장해 두시는 것을 추천드립니다.<br><br>감사합니다.',
+            keywords: ['이용', '기간', '언제까지', '평생']
+          },
+          {
+            question: '구매한 콘텐츠 다운로드가 안 돼요',
+            answerType: 'contact',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>다운로드가 원활하지 않다면 아래를 시도해 주세요.<br><br>• <b>PDF 파일이 열리지 않는 경우</b><br>기기에 PDF 뷰어(Adobe Acrobat Reader, Chrome 등)가 설치되어 있는지 확인해 주세요.<br><br>• <b>일반 다운로드 오류</b><br>다른 브라우저에서 재시도 / 캐시 삭제 후 재시도<br><br>• <b>카카오톡·SNS 앱 내 다운로드 시 파일이 안 보이는 경우</b><br>링크를 복사하여 Chrome, Safari 등 웹 브라우저에서 열어서 다운로드를 재시도해 주세요.<br><br>문제가 지속되면 아래 채널로 문의해 주세요.',
+            contactEmail: 'mkt@openknowl.com',
+            keywords: ['다운로드', '오류', '안돼', '안 돼', '열리지']
+          }
+        ]
+      }
+    }
   },
-  {
-    keywords: ['교육', '교육형', '과정', '어떻게', '진행'],
-    question: '교육형 미니인턴은 어떻게 진행되나요?',
-    answer: '<b>교육형 미니인턴 전형 과정</b><br><br>1. <b>신청</b> — 수행계획서 제출<br>2. <b>선발</b><br>3. <b>OT</b> — 실시간 온라인 진행<br>4. <b>중간 결과물 제출</b><br>5. <b>최종 결과물 제출</b><br>6. <b>평가</b><br><br>* 100% 비대면으로 진행되며, 별도 출퇴근은 없어요.<br>* 과제수행 기간은 약 2주입니다.'
-  },
-  {
-    keywords: ['혜택', '참여', '왜', '좋은점', '장점', '수료증', '피드백'],
-    question: '미니인턴 참여 혜택이 뭔가요?',
-    answer: '<b>미니인턴 참여 혜택</b><br><br>• 3년 차 이상의 현직자 피드백 무료 제공<br>• 수료 시 참여 기업명의 <b>수료증 발급</b><br>• 결과물을 포트폴리오로 활용하여 채용관 내 타 기업 지원 가능<br><br>* 채용관 지원 후 정규직 전환 시, 최대 <b>110만원 취업성과금</b>도 제공돼요!'
-  },
-  {
-    keywords: ['기획안', '제출', '제안서', '업로드', '결과물'],
-    question: '기획안은 어떻게 제출하나요?',
-    answer: '[미니인턴 홈페이지] → [마이커리어] → 신청한 [미니인턴 카드] 선택 → [신청내역 정보] 내 제안서 제출에 업로드하시면 됩니다.<br><br><b>유의사항:</b><br>• PDF 형식, 30MB 이내<br>• 추가 파일은 압축 파일로 제출<br>• 작성자 개인 정보는 표기하지 마세요'
-  },
-  {
-    keywords: ['중간', '피드백', '멘토링', '멘토'],
-    question: '중간 피드백은 어떻게 보나요?',
-    answer: '[미니인턴 홈페이지] → [마이커리어] → 신청한 [미니인턴 카드] 선택 → [신청내역 정보] 내 피드백 보기에서 확인할 수 있어요.<br><br>* 중간 피드백 업로드 완료 후 안내 문자가 발송됩니다.<br>* 중간기획안에 대한 피드백은 현직자 멘토가 1:1로 첨삭해드려요!'
-  },
-  {
-    keywords: ['수료증', '수료', '발급', '증명'],
-    question: '수료증은 어떻게 발급받나요?',
-    answer: '[미니인턴 홈페이지] → [마이커리어] → 신청한 [미니인턴 카드] 선택 → [신청내역 정보] 내 수료증 발급에서 다운받으실 수 있어요.'
-  },
-  {
-    keywords: ['채용', '채용형', '정규직', '취업', '지원'],
-    question: '채용형 미니인턴은 뭔가요?',
-    answer: '<b>채용형 미니인턴</b>은 이력서 중심의 채용문화를 실무역량 중심으로 바꾸기 위한 프로그램이에요.<br><br>이력서가 아닌 <b>과제 결과물로 실무역량을 평가</b>받고 건강한 취업을 이뤄보세요!<br><br>미니인턴은 구직자와 기업의 건강한 채용 문화를 지지합니다.'
-  },
-  {
-    keywords: ['비용', '가격', '무료', '유료', '결제', '돈'],
-    question: '미니인턴은 무료인가요?',
-    answer: '네! 미니인턴 참여는 <b>무료</b>예요.<br><br>참여 시 실무에 바로 활용할 수 있는 10만원 상당의 기획안 작성법 교육도 무료로 제공됩니다.'
-  },
-  {
-    keywords: ['비대면', '온라인', '출퇴근', '재택', '원격'],
-    question: '미니인턴은 비대면으로 진행되나요?',
-    answer: '네! 미니인턴은 <b>100% 비대면</b>으로 진행돼요.<br><br>별도 출퇴근은 없으며, OT는 실시간 온라인으로 진행됩니다. 불참 시 해당 미니인턴에 참여할 수 없으니 꼭 참석해주세요!'
-  },
-  {
-    keywords: ['해피폴리오', '콘텐츠', '아티클', '읽을거리', '정보'],
-    question: '해피폴리오가 뭔가요?',
-    answer: '해피폴리오는 미니인턴의 커리어 콘텐츠 서비스예요.<br><br>직무 인터뷰, 취업 팁, 현직자 이야기 등 취업 준비에 도움이 되는 다양한 아티클을 제공합니다.'
-  },
-  {
-    keywords: ['문의', '고객센터', '연락', '상담', '도움', '문제', '오류', '에러', '버그'],
-    question: '문의는 어디로 하나요?',
-    answer: '미니인턴 고객센터로 문의해주세요!<br><br>홈페이지 하단 "문의하기" 또는 이메일(help@miniintern.com)로 연락하시면 빠르게 답변드리겠습니다.'
-  },
-  {
-    keywords: ['비밀번호', '패스워드', '로그인', '접속', '못'],
-    question: '비밀번호를 잊어버렸어요',
-    answer: '로그인 화면에서 "비밀번호 찾기"를 클릭해주세요.<br><br>가입 시 사용한 이메일로 비밀번호 재설정 링크가 발송됩니다. 소셜 로그인 사용자는 해당 소셜 서비스에서 비밀번호를 변경해주세요.'
-  },
-  {
-    keywords: ['평가', '수료', '결과', '합격', '점수'],
-    question: '최종 평가는 어떻게 이루어지나요?',
-    answer: '결과물(최종 기획안)에 대한 수료 평가는 <b>전문 평가 위원단</b>에서 진행해요.<br><br>기업의 평가(기업 측 의견 및 평가 내용)와는 무관하게 독립적으로 평가됩니다.'
-  },
-];
-
-const SUGGESTED_QUESTIONS = [
-  '미니인턴이 뭔가요?',
-  '참여 혜택이 뭔가요?',
-  '어떻게 진행되나요?',
-  '미니인턴은 무료인가요?',
-];
+  '기업회원': {
+    label: '기업회원',
+    categories: {
+      '계정·권한': {
+        questions: [
+          {
+            question: '기업 정보(로고, 소개)를 수정하고 싶어요',
+            answerType: 'image',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관 설정 > 기업 프로필에서 로고·소개 등을 수정하실 수 있습니다.<br><br>감사합니다.',
+            imagePlaceholder: '기업 프로필 수정 화면 안내 스크린샷',
+            keywords: ['기업', '정보', '로고', '소개', '수정']
+          },
+          {
+            question: '퇴사한 담당자 권한을 제거하고 싶어요',
+            answerType: 'image',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관 설정 > 멤버 관리에서 해당 담당자의 권한을 [퇴사]로 변경해 주시면 됩니다.<br><br>감사합니다.',
+            imagePlaceholder: '권한 변경 화면 안내 스크린샷',
+            keywords: ['퇴사', '권한', '제거', '담당자']
+          },
+          {
+            question: '권한 종류가 어떻게 되나요?',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>마스터 / 인사담당자 / 구성원 / 퇴사 4가지 권한이 있습니다.<br>최초 가입자는 마스터 권한을 자동으로 부여받으며, 이후 가입자의 권한을 지정·변경할 수 있습니다.<br><br>감사합니다.',
+            keywords: ['권한', '종류', '마스터', '인사']
+          },
+          {
+            question: '담당자를 추가로 초대하고 싶어요',
+            answerType: 'image',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관 설정 > 멤버 관리 > [초대] 버튼을 통해 추가 담당자를 초대할 수 있습니다.<br><br>감사합니다.',
+            imagePlaceholder: '멤버 초대 화면 안내 스크린샷',
+            keywords: ['초대', '추가', '담당자', '멤버']
+          }
+        ]
+      },
+      '프로그램 개설': {
+        questions: [
+          {
+            question: '미니인턴 기업 프로그램은 어떻게 개설하나요?',
+            answerType: 'contact',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>기업 프로그램 개설은 운영팀과 사전 협의가 필요합니다.<br>아래 채널로 문의해 주시면 안내드리겠습니다.<br><br>감사합니다.',
+            keywords: ['개설', '프로그램', '만들기']
+          },
+          {
+            question: '기획안 평가는 기업이 직접 하나요?',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>네, 기업 담당자가 직접 기획안을 검토하고 피드백을 제공하는 방식으로 진행됩니다.<br>운영팀이 과정 전반을 함께 지원합니다.<br><br>감사합니다.',
+            keywords: ['평가', '기획안', '검토', '기업']
+          }
+        ]
+      },
+      '지원자 관리': {
+        questions: [
+          {
+            question: '지원자 이력서와 기획안은 어디서 확인하나요?',
+            answerType: 'image',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관리 > 지원자 목록 > 해당 지원자 클릭 시 이력서와 기획안을 열람할 수 있습니다.<br><br>감사합니다.',
+            imagePlaceholder: '지원자 상세 열람 화면 안내 스크린샷',
+            keywords: ['지원자', '이력서', '기획안', '열람']
+          },
+          {
+            question: '지원자 평가 상태는 어떻게 변경하나요?',
+            answerType: 'image',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>평가 상태는 미열람 > 검토중 > 서류합격 > 최종합격 / 불합격 순으로 변경 가능합니다.<br>기업회원 메인 > 지원자 관리 > [평가하기]에서 진행하세요.<br><br>감사합니다.',
+            imagePlaceholder: '평가 상태 변경 화면 안내 스크린샷',
+            keywords: ['평가', '상태', '변경', '합격']
+          }
+        ]
+      },
+      '결제·수수료': {
+        questions: [
+          {
+            question: '채용 수수료는 얼마인가요?',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관을 통해 정규직·계약직 전환 시 계약 연봉의 6% 수수료가 발생합니다.<br>수습 기간 중에는 별도 비용이 발생하지 않습니다.<br><br>감사합니다.',
+            keywords: ['수수료', '비용', '얼마', '가격']
+          },
+          {
+            question: '세금계산서 발행은 어떻게 하나요?',
+            answerType: 'contact',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>세금계산서 발행은 운영팀으로 직접 문의해 주세요.<br><br>감사합니다.',
+            keywords: ['세금', '계산서', '발행', '영수증']
+          }
+        ]
+      },
+      '채용공고': {
+        questions: [
+          {
+            question: '등록한 공고를 수정하거나 마감할 수 있나요?',
+            answerType: 'text',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관리 > 공고 목록 > 해당 공고 선택 > [수정] 또는 [마감] 버튼을 이용해 주세요.<br><br>감사합니다.',
+            keywords: ['공고', '수정', '마감', '변경']
+          },
+          {
+            question: '채용공고는 어떻게 등록하나요?',
+            answerType: 'image',
+            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>recruitment.miniintern.com 접속 > 채용관리 > [공고 등록] 버튼을 눌러 진행해 주세요.<br><br>감사합니다.',
+            imagePlaceholder: '공고 등록 화면 안내 스크린샷',
+            keywords: ['공고', '등록', '작성']
+          }
+        ]
+      }
+    }
+  }
+};
 
 // ===== Scroll to bottom =====
 function scrollBottom() {
@@ -201,58 +397,125 @@ function addQuickReplies(options, callback) {
   scrollBottom();
 }
 
-// ===== FAQ Matching =====
-function findFaqAnswer(text) {
-  const normalized = text.toLowerCase().replace(/[?!.,]/g, '');
-  let bestMatch = null;
-  let bestScore = 0;
-
-  for (const faq of FAQ_DATA) {
-    let score = 0;
-    for (const kw of faq.keywords) {
-      if (normalized.includes(kw)) score++;
-    }
-    if (score > bestScore) {
-      bestScore = score;
-      bestMatch = faq;
-    }
-  }
-
-  return bestScore > 0 ? bestMatch : null;
+// ===== Dev Comment (동적 정보 안내) =====
+function addDevComment(comment) {
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+  row.innerHTML = `
+    <div class="msg-avatar" style="visibility:hidden;"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+    <div class="dev-comment">
+      <span class="dev-comment-label">DEV</span>
+      <span>${comment}</span>
+    </div>`;
+  chatBody.appendChild(row);
+  scrollBottom();
 }
 
-// ===== Fallback Answers =====
-const FALLBACK_ANSWERS = [
-  '좋은 질문이에요! 미니인턴에서는 인턴십 탐색부터 지원까지 한 번에 할 수 있어요.<br><br>더 자세한 내용이 궁금하시면 홈페이지를 방문하시거나, 고객센터(help@miniintern.com)로 문의해주세요!',
-  '해당 내용은 미니인턴 홈페이지에서 더 자세히 확인하실 수 있어요.<br><br>마이페이지에서 프로필을 완성하시면 맞춤 정보도 받아보실 수 있습니다!',
-  '미니인턴은 대학생과 취준생의 커리어 성장을 돕는 플랫폼이에요.<br><br>관련해서 더 궁금한 점이 있으시면 편하게 질문해주세요!',
-  '네, 이해했어요! 해당 사항은 미니인턴 고객센터에서 빠르게 도움받으실 수 있어요.<br><br>이메일: help@miniintern.com 으로 문의해주시면 담당자가 안내해드릴게요.',
-];
-
-function getFallbackAnswer(text) {
-  const idx = Math.abs(text.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % FALLBACK_ANSWERS.length;
-  return FALLBACK_ANSWERS[idx];
-}
-
-// ===== Send message =====
-async function sendMessage() {
-  const text = inputField.value.trim();
-  if (!text) return;
-  inputField.value = '';
-  document.getElementById('sendBtn').disabled = true;
-  chatBody.querySelectorAll('.quick-replies').forEach(el => el.remove());
-  addUserMsg(text);
-
-  if (csInquiryMode) {
-    csInquiryMode = false;
-    await addBotMsg(`이 내용으로 문의를 작성할게요.`);
-    await addBotMsg('운영팀에 문의가 전송되었습니다! 담당자가 확인 후 연락드릴게요.');
-    await addBotMsg('다른 궁금한 점이 있으신가요?');
-    addQuickReplies(['미니인턴은 무료인가요?', '문의는 어디로 하나요?', '해피폴리오가 뭔가요?'], handleUserInput);
-    return;
+// ===== Unified Answer Renderer =====
+async function renderAnswer(questionObj, showThinking = false) {
+  if (questionObj.answerType === 'image') {
+    await addBotMsgWithImage(questionObj.answer, questionObj.imagePlaceholder, 600, showThinking);
+  } else {
+    await addBotMsg(questionObj.answer, 600, showThinking);
   }
 
-  handleUserInput(text, true);
+  switch (questionObj.answerType) {
+    case 'contact':
+      if (questionObj.contactEmail) {
+        addCsCardWithEmail(questionObj.contactEmail);
+      } else {
+        addCsCard();
+      }
+      break;
+    case 'dynamic':
+      if (questionObj.devComment) {
+        addDevComment(questionObj.devComment);
+      }
+      break;
+  }
+}
+
+// ===== Bot message with image placeholder =====
+function addBotMsgWithImage(text, imagePlaceholder, delay = 600, showThinking = false) {
+  const bubbleHTML = `
+    <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+    <div class="msg-bubble bot bubble-with-image">
+      <div class="bubble-text">${text}</div>
+      <div class="image-placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2M8.5 13.5l2.5 3.01L14.5 12l4.5 6H5z"/></svg>
+        <span>${imagePlaceholder}</span>
+      </div>
+    </div>`;
+
+  return new Promise(resolve => {
+    if (!showThinking) {
+      const loader = document.createElement('div');
+      loader.className = 'msg-row';
+      loader.innerHTML = `
+        <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+        <div class="msg-bubble bot loading-bubble">
+          <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
+        </div>`;
+      chatBody.appendChild(loader);
+      scrollBottom();
+
+      setTimeout(() => {
+        loader.remove();
+        const row = document.createElement('div');
+        row.className = 'msg-row';
+        row.innerHTML = bubbleHTML;
+        chatBody.appendChild(row);
+        messageLog.push({ type: 'bot', text: text + `\n[이미지: ${imagePlaceholder}]` });
+        scrollBottom();
+        resolve();
+      }, delay);
+      return;
+    }
+
+    const typing = document.createElement('div');
+    typing.className = 'msg-row';
+    typing.innerHTML = `
+      <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+      <div class="thinking-indicator">
+        <div class="thinking-step active">
+          <span class="step-text">${THINKING_STEPS[0]}</span>
+          <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
+        </div>
+      </div>`;
+    chatBody.appendChild(typing);
+    scrollBottom();
+
+    const stepEl = typing.querySelector('.thinking-step');
+    const textEl = stepEl.querySelector('.step-text');
+    let step = 0;
+    const stepInterval = setInterval(() => {
+      step++;
+      if (step < THINKING_STEPS.length) {
+        stepEl.classList.remove('active');
+        stepEl.classList.add('done');
+        setTimeout(() => {
+          stepEl.classList.remove('done');
+          stepEl.classList.add('active');
+          textEl.textContent = THINKING_STEPS[step];
+        }, 500);
+      } else {
+        clearInterval(stepInterval);
+        stepEl.classList.remove('active');
+        stepEl.classList.add('done');
+      }
+    }, 1000);
+
+    setTimeout(() => {
+      typing.remove();
+      const row = document.createElement('div');
+      row.className = 'msg-row';
+      row.innerHTML = bubbleHTML;
+      chatBody.appendChild(row);
+      messageLog.push({ type: 'bot', text: text + `\n[이미지: ${imagePlaceholder}]` });
+      scrollBottom();
+      resolve();
+    }, 3500);
+  });
 }
 
 // ===== CS Handoff =====
@@ -282,52 +545,242 @@ function addCsCard() {
   scrollBottom();
 }
 
+function addCsCardWithEmail(email) {
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+  row.innerHTML = `
+    <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+    <div class="cs-card">
+      <div class="cs-card-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"/></svg>
+        <span>문의하기</span>
+      </div>
+      <p class="cs-card-desc">아래 이메일로 문의해 주세요.</p>
+      <div class="cs-card-actions">
+        <a href="mailto:${email}" class="cs-btn cs-btn-primary" style="text-decoration:none;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z"/></svg>
+          ${email}
+        </a>
+      </div>
+    </div>`;
+  chatBody.appendChild(row);
+  scrollBottom();
+}
+
 async function sendChatHistory() {
   chatBody.querySelectorAll('.cs-card').forEach(el => {
-    const row = el.closest('.msg-row');
-    if (row) row.remove();
+    const r = el.closest('.msg-row');
+    if (r) r.remove();
   });
   await addBotMsg('채팅 내역이 운영팀에 전송되었습니다! 담당자가 확인 후 연락드릴게요.');
-  await addBotMsg('다른 궁금한 점이 있으신가요?');
-  addQuickReplies(['미니인턴은 무료인가요?', '문의는 어디로 하나요?', '해피폴리오가 뭔가요?'], handleUserInput);
+  showPostAnswerChips();
 }
 
 async function startCsInquiry() {
   chatBody.querySelectorAll('.cs-card').forEach(el => {
-    const row = el.closest('.msg-row');
-    if (row) row.remove();
+    const r = el.closest('.msg-row');
+    if (r) r.remove();
   });
   csInquiryMode = true;
   await addBotMsg('운영팀에게 보낼 문의사항을 작성해주세요.');
 }
 
-// ===== Handle user input =====
-async function handleUserInput(text, showThinking = false) {
+// ===== Tree Navigation =====
+function handleUserTypeSelect(type) {
+  const key = type === '구직자 (취준생)' ? '구직자' : '기업회원';
+  navState.userType = key;
+  navState.category = null;
+
+  const categories = Object.keys(FAQ_TREE[key].categories);
+  addBotMsg('궁금한 카테고리를 선택해주세요!');
+  addQuickReplies([...categories, '직접 입력하기'], handleCategorySelect);
+}
+
+function handleCategorySelect(category) {
+  if (category === '직접 입력하기') {
+    addBotMsg('궁금한 내용을 직접 입력해주세요!');
+    return;
+  }
+
+  // 카테고리가 현재 유저 타입에 없으면 전체에서 찾기
+  let userType = navState.userType;
+  if (!userType || !FAQ_TREE[userType]?.categories[category]) {
+    for (const ut of Object.keys(FAQ_TREE)) {
+      if (FAQ_TREE[ut].categories[category]) {
+        userType = ut;
+        navState.userType = ut;
+        break;
+      }
+    }
+  }
+
+  navState.category = category;
+  const questions = FAQ_TREE[userType].categories[category].questions.map(q => q.question);
+
+  addBotMsg(`<b>${category}</b> 관련 질문이에요. 원하시는 질문을 선택해주세요!`);
+  addQuickReplies([...questions, '다른 카테고리 보기'], handleQuestionSelect);
+}
+
+async function handleQuestionSelect(questionText) {
+  if (questionText === '다른 카테고리 보기') {
+    if (navState.userType) {
+      const categories = Object.keys(FAQ_TREE[navState.userType].categories);
+      await addBotMsg('카테고리를 선택해주세요!');
+      addQuickReplies([...categories, '직접 입력하기'], handleCategorySelect);
+    } else {
+      showUserTypeSelection();
+    }
+    return;
+  }
+
+  if (questionText === '처음으로') {
+    navState = { userType: '구직자', category: null };
+    await addBotMsg('처음으로 돌아갑니다!');
+    const categories = Object.keys(FAQ_TREE['구직자'].categories);
+    addQuickReplies([...categories, '직접 입력하기'], handleCategorySelect);
+    return;
+  }
+
+  // Find the question object in the tree
+  const qObj = findQuestionObj(questionText);
+  if (qObj) {
+    await renderAnswer(qObj);
+    showPostAnswerChips();
+  } else {
+    await addBotMsg('죄송해요, 해당 질문을 찾을 수 없어요.');
+    showPostAnswerChips();
+  }
+}
+
+function findQuestionObj(questionText) {
+  for (const ut of Object.values(FAQ_TREE)) {
+    for (const cat of Object.values(ut.categories)) {
+      for (const q of cat.questions) {
+        if (q.question === questionText) return q;
+      }
+    }
+  }
+  return null;
+}
+
+function showPostAnswerChips() {
+  const chips = [];
+
+  // Same category questions directly
+  if (navState.userType && navState.category) {
+    const catQuestions = FAQ_TREE[navState.userType].categories[navState.category]?.questions || [];
+    catQuestions.forEach(q => chips.push(q.question));
+  }
+
+  chips.push('다른게 궁금해요');
+  addQuickReplies(chips, handlePostAnswerAction);
+}
+
+async function handlePostAnswerAction(action) {
+  if (action === '다른게 궁금해요') {
+    handleQuestionSelect('다른 카테고리 보기');
+  } else {
+    // It's a question text
+    handleQuestionSelect(action);
+  }
+}
+
+function showUserTypeSelection() {
+  addQuickReplies(['구직자 (취준생)', '기업회원'], handleUserTypeSelect);
+}
+
+// ===== FAQ Keyword Search (flat search across tree) =====
+function findFaqAnswer(text) {
+  const normalized = text.toLowerCase().replace(/[?!.,]/g, '');
+  let bestMatch = null;
+  let bestScore = 0;
+
+  for (const ut of Object.values(FAQ_TREE)) {
+    for (const cat of Object.values(ut.categories)) {
+      for (const q of cat.questions) {
+        let score = 0;
+        for (const kw of q.keywords) {
+          if (normalized.includes(kw)) score++;
+        }
+        if (score > bestScore) {
+          bestScore = score;
+          bestMatch = q;
+        }
+      }
+    }
+  }
+
+  return bestScore > 0 ? bestMatch : null;
+}
+
+// ===== Fallback Answers =====
+const FALLBACK_ANSWERS = [
+  '좋은 질문이에요! 더 자세한 내용이 궁금하시면 홈페이지를 방문하시거나, 고객센터(help@miniintern.com)로 문의해주세요!',
+  '해당 내용은 미니인턴 홈페이지에서 더 자세히 확인하실 수 있어요.',
+  '미니인턴은 대학생과 취준생의 커리어 성장을 돕는 플랫폼이에요. 관련해서 더 궁금한 점이 있으시면 편하게 질문해주세요!',
+  '해당 사항은 미니인턴 고객센터에서 빠르게 도움받으실 수 있어요.<br><br>이메일: help@miniintern.com 으로 문의해주시면 담당자가 안내해드릴게요.',
+];
+
+function getFallbackAnswer(text) {
+  const idx = Math.abs(text.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % FALLBACK_ANSWERS.length;
+  return FALLBACK_ANSWERS[idx];
+}
+
+// ===== Send message (free text) =====
+async function sendMessage() {
+  const text = inputField.value.trim();
+  if (!text) return;
+  inputField.value = '';
+  document.getElementById('sendBtn').disabled = true;
+  chatBody.querySelectorAll('.quick-replies').forEach(el => el.remove());
+  addUserMsg(text);
+
+  if (csInquiryMode) {
+    csInquiryMode = false;
+    await addBotMsg('이 내용으로 문의를 작성할게요.');
+    await addBotMsg('운영팀에 문의가 전송되었습니다! 담당자가 확인 후 연락드릴게요.');
+    showPostAnswerChips();
+    return;
+  }
+
   // CS 테스트 트리거
   if (text.replace(/\s/g, '').toLowerCase() === 'cs테스트') {
-    await addBotMsg('죄송해요, 해당 질문은 제가 답변하기 어려운 내용이에요.', 600, showThinking);
+    await addBotMsg('죄송해요, 해당 질문은 제가 답변하기 어려운 내용이에요.', 600, true);
     await addBotMsg('운영팀에서 직접 도움을 드릴 수 있도록 안내해드릴게요!');
     addCsCard();
     return;
   }
 
+  // Keyword search across entire tree
   const faq = findFaqAnswer(text);
-
   if (faq) {
-    await addBotMsg(faq.answer, 600, showThinking);
+    await renderAnswer(faq, true);
+  } else {
+    const fallback = getFallbackAnswer(text);
+    await addBotMsg(fallback, 600, true);
+  }
+  showPostAnswerChips();
+}
+
+// ===== Handle user input (from chips — no thinking) =====
+async function handleUserInput(text, showThinking = false) {
+  const faq = findFaqAnswer(text);
+  if (faq) {
+    await renderAnswer(faq, showThinking);
   } else {
     const fallback = getFallbackAnswer(text);
     await addBotMsg(fallback, 600, showThinking);
   }
-  await addBotMsg('다른 궁금한 점이 있으신가요?');
-  addQuickReplies(['미니인턴은 무료인가요?', '문의는 어디로 하나요?', '해피폴리오가 뭔가요?'], handleUserInput);
+  showPostAnswerChips();
 }
 
 // ===== Welcome Flow =====
 async function startWelcome() {
+  navState = { userType: '구직자', category: null };
   await addBotMsg('안녕하세요! 미니인턴 AI 챗봇입니다 😊', 600);
-  await addBotMsg('미니인턴 이용에 궁금한 점이 있으면 편하게 물어보세요!', 600);
-  addQuickReplies(SUGGESTED_QUESTIONS, handleUserInput);
+  await addBotMsg('궁금한 카테고리를 선택해주세요!', 600);
+  const categories = Object.keys(FAQ_TREE['구직자'].categories);
+  addQuickReplies([...categories, '직접 입력하기'], handleCategorySelect);
 }
 
 // ===== New Chat =====
@@ -442,17 +895,14 @@ function resumeSession(id) {
 
   const session = sessions[idx];
 
-  // Save current conversation first, then remove resumed session
   saveSession();
   const updated = JSON.parse(localStorage.getItem('chatbot_sessions') || '[]');
   const newIdx = updated.findIndex(s => s.id === id);
   if (newIdx !== -1) updated.splice(newIdx, 1);
   localStorage.setItem('chatbot_sessions', JSON.stringify(updated));
 
-  // Restore messages
   messageLog = [...session.messages];
 
-  // Render messages into chatBody
   chatBody.innerHTML = '';
   session.messages.forEach(msg => {
     if (msg.type === 'bot') {
@@ -466,13 +916,11 @@ function resumeSession(id) {
       const row = document.createElement('div');
       row.className = 'msg-row user';
       row.innerHTML = `
-        <div class="msg-avatar">나</div>
         <div class="msg-bubble user">${msg.text}</div>`;
       chatBody.appendChild(row);
     }
   });
 
-  // Switch to chat view
   switchTab('chat');
   scrollBottom();
 }
