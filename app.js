@@ -428,9 +428,7 @@ async function renderAnswer(questionObj, showThinking = false) {
       }
       break;
     case 'dynamic':
-      if (questionObj.devComment) {
-        addDevComment(questionObj.devComment);
-      }
+      // devComment는 개발 문서 참고용 — 챗봇 UI에는 출력하지 않음
       break;
   }
 }
