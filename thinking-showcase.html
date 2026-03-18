@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미니인턴 AI 챗봇 — Full UI Showcase</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="styles.css">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+/* ===== Showcase Layout ===== */
+body {
+  background: #E8EAED;
+  padding: 40px;
+  min-height: auto;
+}
+.showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+.showcase-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.showcase-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #41454D;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #D2D4D7;
+}
+.showcase-row {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.showcase-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.showcase-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94999E;
+  background: white;
+  padding: 3px 10px;
+  border-radius: 4px;
+  align-self: flex-start;
+}
+
+/* Override phone styles for showcase */
+.phone {
+  display: flex !important;
+  position: static !important;
+  animation: none !important;
+}
+.phone.mini {
+  height: auto;
+}
+
+/* FAB showcase */
+.fab-showcase {
+  position: static;
+  display: flex;
+}
+
+/* Override animations for static display */
+.msg-row, .quick-replies, .msg-system { animation: none !important; }
+
+/* Disable shimmer for clean capture */
+.thinking-indicator::before { animation: shimmer 2s infinite; }
+</style>
+</head>
+<body>
+
+<div class="showcase">
+
+<!-- ========== 1. FAB Button ========== -->
+<div class="showcase-section">
+  <div class="showcase-title">1. FAB Button</div>
+  <div class="showcase-row">
+    <div class="showcase-item">
+      <span class="showcase-label">Default (닫힘)</span>
+      <button class="fab fab-showcase" style="position:static;">
+        <svg class="fab-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 14H5.17L4 17.17V4h16z"/></svg>
+      </button>
+    </div>
+    <div class="showcase-item">
+      <span class="showcase-label">Active (열림)</span>
+      <button class="fab fab-showcase active" style="position:static;">
+        <svg class="fab-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 2. Welcome Screen ========== -->
+<div class="showcase-section">
+  <div class="showcase-title">2. Welcome — 첫 진입 화면</div>
+  <div class="showcase-row">
+    <div class="showcase-item">
+      <span class="showcase-label">웰컴 메시지 + 추천 질문</span>
+      <div class="phone">
+        <div class="header">
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">미니인턴 AI 챗봇</div>
+          <button class="history-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg>
+          </button>
+        </div>
+        <div class="chat-body" style="flex:1; overflow-y:auto;">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">안녕하세요! 미니인턴 AI 챗봇입니다 😊</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">미니인턴 이용에 궁금한 점이 있으면 편하게 물어보세요!</div>
+          </div>
+          <div class="quick-replies">
+            <button class="chip">미니인턴이 뭔가요?</button>
+            <button class="chip">참여 혜택이 뭔가요?</button>
+            <button class="chip">어떻게 진행되나요?</button>
+            <button class="chip">미니인턴은 무료인가요?</button>
+          </div>
+        </div>
+        <div class="input-bar">
+          <input class="input-field" type="text" placeholder="메시지를 입력하세요..." disabled>
+          <button class="send-btn" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 3. Simple Loading (선택지 클릭) ========== -->
+<div class="showcase-section">
+  <div class="showcase-title">3. 대화 중 — 간단 로딩 (선택지 클릭 시)</div>
+  <div class="showcase-row">
+    <div class="showcase-item">
+      <span class="showcase-label">로딩 dots 말풍선</span>
+      <div class="phone">
+        <div class="header">
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">미니인턴 AI 챗봇</div>
+          <button class="history-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg>
+          </button>
+        </div>
+        <div class="chat-body" style="flex:1; overflow-y:auto;">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">안녕하세요! 미니인턴 AI 챗봇입니다 😊</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">미니인턴 이용에 궁금한 점이 있으면 편하게 물어보세요!</div>
+          </div>
+          <div class="msg-row user">
+            <div class="msg-bubble user">미니인턴은 무료인가요?</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot loading-bubble">
+              <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="input-bar">
+          <input class="input-field" type="text" placeholder="메시지를 입력하세요..." disabled>
+          <button class="send-btn" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 4. 3-Step Thinking (직접 입력) ========== -->
+<div class="showcase-section">
+  <div class="showcase-title">4. 대화 중 — 3단계 Thinking (직접 입력 시)</div>
+  <div class="showcase-row">
+
+    <div class="showcase-item">
+      <span class="showcase-label">Step 1 — 답변 생각 중</span>
+      <div class="phone">
+        <div class="header">
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">미니인턴 AI 챗봇</div>
+          <button class="history-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg>
+          </button>
+        </div>
+        <div class="chat-body" style="flex:1; overflow-y:auto;">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">미니인턴 이용에 궁금한 점이 있으면 편하게 물어보세요!</div>
+          </div>
+          <div class="msg-row user">
+            <div class="msg-bubble user">채용형 미니인턴은 어떤 혜택이 있나요?</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="thinking-indicator">
+              <div class="thinking-step active">
+                <span class="step-text">답변 생각 중</span>
+                <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="input-bar">
+          <input class="input-field" type="text" placeholder="메시지를 입력하세요..." disabled>
+          <button class="send-btn" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase-item">
+      <span class="showcase-label">Step 2 — 추론 중</span>
+      <div class="phone">
+        <div class="header">
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">미니인턴 AI 챗봇</div>
+          <button class="history-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg>
+          </button>
+        </div>
+        <div class="chat-body" style="flex:1; overflow-y:auto;">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">미니인턴 이용에 궁금한 점이 있으면 편하게 물어보세요!</div>
+          </div>
+          <div class="msg-row user">
+            <div class="msg-bubble user">채용형 미니인턴은 어떤 혜택이 있나요?</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="thinking-indicator">
+              <div class="thinking-step active">
+                <span class="step-text">추론 중</span>
+                <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="input-bar">
+          <input class="input-field" type="text" placeholder="메시지를 입력하세요..." disabled>
+          <button class="send-btn" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase-item">
+      <span class="showcase-label">Step 3 — 답변 검토 중</span>
+      <div class="phone">
+        <div class="header">
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">미니인턴 AI 챗봇</div>
+          <button class="history-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg>
+          </button>
+        </div>
+        <div class="chat-body" style="flex:1; overflow-y:auto;">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">미니인턴 이용에 궁금한 점이 있으면 편하게 물어보세요!</div>
+          </div>
+          <div class="msg-row user">
+            <div class="msg-bubble user">채용형 미니인턴은 어떤 혜택이 있나요?</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="thinking-indicator">
+              <div class="thinking-step active">
+                <span class="step-text">답변 검토 중</span>
+                <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="input-bar">
+          <input class="input-field" type="text" placeholder="메시지를 입력하세요..." disabled>
+          <button class="send-btn" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase-item">
+      <span class="showcase-label">완료 상태</span>
+      <div class="phone">
+        <div class="header">
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">미니인턴 AI 챗봇</div>
+          <button class="history-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg>
+          </button>
+        </div>
+        <div class="chat-body" style="flex:1; overflow-y:auto;">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">미니인턴 이용에 궁금한 점이 있으면 편하게 물어보세요!</div>
+          </div>
+          <div class="msg-row user">
+            <div class="msg-bubble user">채용형 미니인턴은 어떤 혜택이 있나요?</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="thinking-indicator">
+              <div class="thinking-step done">
+                <span class="step-text">답변 검토 중</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="input-bar">
+          <input class="input-field" type="text" placeholder="메시지를 입력하세요..." disabled>
+          <button class="send-btn" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== 5. 답변 완료 + 후속 질문 ========== -->
+<div class="showcase-section">
+  <div class="showcase-title">5. 대화 중 — 답변 완료 + 후속 질문</div>
+  <div class="showcase-row">
+    <div class="showcase-item">
+      <span class="showcase-label">답변 + Quick Replies</span>
+      <div class="phone">
+        <div class="header">
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">미니인턴 AI 챗봇</div>
+          <button class="history-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg>
+          </button>
+        </div>
+        <div class="chat-body" style="flex:1; overflow-y:auto;">
+          <div class="msg-row user">
+            <div class="msg-bubble user">미니인턴은 무료인가요?</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">네! 미니인턴 참여는 <b>무료</b>예요.<br><br>참여 시 실무에 바로 활용할 수 있는 10만원 상당의 기획안 작성법 교육도 무료로 제공됩니다.</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">다른 궁금한 점이 있으신가요?</div>
+          </div>
+          <div class="quick-replies">
+            <button class="chip">미니인턴은 무료인가요?</button>
+            <button class="chip">문의는 어디로 하나요?</button>
+            <button class="chip">해피폴리오가 뭔가요?</button>
+          </div>
+        </div>
+        <div class="input-bar">
+          <input class="input-field" type="text" placeholder="메시지를 입력하세요..." disabled>
+          <button class="send-btn" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 6. History — Empty ========== -->
+<div class="showcase-section">
+  <div class="showcase-title">6. 대화 내역 — 빈 상태</div>
+  <div class="showcase-row">
+    <div class="showcase-item">
+      <span class="showcase-label">Empty State</span>
+      <div class="phone">
+        <div class="header">
+          <button class="back-btn" style="display:flex;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg>
+          </button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">대화 내역</div>
+        </div>
+        <div class="history-panel" style="display:flex; flex:1;">
+          <div class="history-empty">
+            <div class="history-empty-icon">💬</div>
+            <div>저장된 대화가 없습니다</div>
+          </div>
+        </div>
+        <div class="input-bar" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 7. History — With Items ========== -->
+<div class="showcase-section">
+  <div class="showcase-title">7. 대화 내역 — 리스트</div>
+  <div class="showcase-row">
+    <div class="showcase-item">
+      <span class="showcase-label">History List</span>
+      <div class="phone">
+        <div class="header">
+          <button class="back-btn" style="display:flex;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg>
+          </button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">대화 내역</div>
+        </div>
+        <div class="history-panel" style="display:flex; flex:1;">
+          <div class="history-item">
+            <div class="history-item-content">
+              <div class="history-item-title">미니인턴은 무료인가요?</div>
+              <div class="history-item-preview">네! 미니인턴 참여는 무료예요.</div>
+              <div class="history-item-date">2026. 3. 18. 14:32:10</div>
+            </div>
+            <button class="history-more-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg>
+            </button>
+          </div>
+          <div class="history-item">
+            <div class="history-item-content">
+              <div class="history-item-title">교육형 미니인턴 진행 과정</div>
+              <div class="history-item-preview">교육형 미니인턴 전형 과정은...</div>
+              <div class="history-item-date">2026. 3. 17. 10:15:22</div>
+            </div>
+            <button class="history-more-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg>
+            </button>
+          </div>
+          <div class="history-item">
+            <div class="history-item-content">
+              <div class="history-item-title">참여 혜택이 뭔가요?</div>
+              <div class="history-item-preview">미니인턴 참여 혜택은 현직자 피드백...</div>
+              <div class="history-item-date">2026. 3. 16. 09:42:05</div>
+            </div>
+            <button class="history-more-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="input-bar" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>

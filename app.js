@@ -9,6 +9,7 @@ const inputBar = document.querySelector('.input-bar');
 
 let messageLog = [];
 let currentTab = 'chat';
+let csInquiryMode = false;
 
 // ===== FAQ Data =====
 const FAQ_DATA = [
@@ -234,18 +235,82 @@ function getFallbackAnswer(text) {
 }
 
 // ===== Send message =====
-function sendMessage() {
+async function sendMessage() {
   const text = inputField.value.trim();
   if (!text) return;
   inputField.value = '';
   document.getElementById('sendBtn').disabled = true;
   chatBody.querySelectorAll('.quick-replies').forEach(el => el.remove());
   addUserMsg(text);
+
+  if (csInquiryMode) {
+    csInquiryMode = false;
+    await addBotMsg(`이 내용으로 문의를 작성할게요.`);
+    await addBotMsg('운영팀에 문의가 전송되었습니다! 담당자가 확인 후 연락드릴게요.');
+    await addBotMsg('다른 궁금한 점이 있으신가요?');
+    addQuickReplies(['미니인턴은 무료인가요?', '문의는 어디로 하나요?', '해피폴리오가 뭔가요?'], handleUserInput);
+    return;
+  }
+
   handleUserInput(text, true);
+}
+
+// ===== CS Handoff =====
+function addCsCard() {
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+  row.innerHTML = `
+    <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+    <div class="cs-card">
+      <div class="cs-card-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"/></svg>
+        <span>운영팀 직접 문의</span>
+      </div>
+      <p class="cs-card-desc">더 정확한 답변을 위해 운영팀이 직접 도와드릴게요.</p>
+      <div class="cs-card-actions">
+        <button class="cs-btn cs-btn-primary" onclick="sendChatHistory()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+          채팅 내역 전송하기
+        </button>
+        <button class="cs-btn cs-btn-secondary" onclick="startCsInquiry()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83l3.75 3.75z"/></svg>
+          문의 작성하기
+        </button>
+      </div>
+    </div>`;
+  chatBody.appendChild(row);
+  scrollBottom();
+}
+
+async function sendChatHistory() {
+  chatBody.querySelectorAll('.cs-card').forEach(el => {
+    const row = el.closest('.msg-row');
+    if (row) row.remove();
+  });
+  await addBotMsg('채팅 내역이 운영팀에 전송되었습니다! 담당자가 확인 후 연락드릴게요.');
+  await addBotMsg('다른 궁금한 점이 있으신가요?');
+  addQuickReplies(['미니인턴은 무료인가요?', '문의는 어디로 하나요?', '해피폴리오가 뭔가요?'], handleUserInput);
+}
+
+async function startCsInquiry() {
+  chatBody.querySelectorAll('.cs-card').forEach(el => {
+    const row = el.closest('.msg-row');
+    if (row) row.remove();
+  });
+  csInquiryMode = true;
+  await addBotMsg('운영팀에게 보낼 문의사항을 작성해주세요.');
 }
 
 // ===== Handle user input =====
 async function handleUserInput(text, showThinking = false) {
+  // CS 테스트 트리거
+  if (text.replace(/\s/g, '').toLowerCase() === 'cs테스트') {
+    await addBotMsg('죄송해요, 해당 질문은 제가 답변하기 어려운 내용이에요.', 600, showThinking);
+    await addBotMsg('운영팀에서 직접 도움을 드릴 수 있도록 안내해드릴게요!');
+    addCsCard();
+    return;
+  }
+
   const faq = findFaqAnswer(text);
 
   if (faq) {

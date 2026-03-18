@@ -394,6 +394,68 @@ body {
 }
 
 
+/* ===== CS Card ===== */
+.cs-card {
+  background: var(--white);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-lg);
+  border-top-left-radius: 4px;
+  padding: 16px;
+  max-width: 260px;
+  animation: msgIn 0.3s ease;
+}
+.cs-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+.cs-card-header svg {
+  color: var(--blue-500);
+  flex-shrink: 0;
+}
+.cs-card-desc {
+  font-size: 13px;
+  color: var(--gray-700);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.cs-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cs-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.cs-btn-primary {
+  background: var(--blue-500);
+  color: var(--white);
+}
+.cs-btn-primary:hover { background: #0d8de6; }
+.cs-btn-secondary {
+  background: var(--gray-200);
+  color: var(--gray-800);
+}
+.cs-btn-secondary:hover { background: var(--gray-300); }
+.cs-btn-secondary svg { fill: var(--gray-800); }
+
+
 /* ===== System Message ===== */
 .msg-system {
   text-align: center;
