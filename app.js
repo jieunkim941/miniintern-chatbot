@@ -11,6 +11,8 @@ let messageLog = [];
 let currentTab = 'chat';
 let csInquiryMode = false;
 let navState = { userType: null, category: null };
+let sessionDate = null;  // 세션 최초 생성 시간 보존
+let sessionTime = null;
 
 // ===== Input bar show/hide =====
 function hideInput() {
@@ -623,10 +625,17 @@ function handleUserTypeSelect(type) {
 
 async function handleCategorySelect(category) {
   if (category === '직접 입력') {
+    enterChatSession('직접 입력');
+    chatBody.innerHTML = '';
+    messageLog = [];
     await addBotMsg('궁금한 내용을 직접 입력해주세요!');
     showInput();
     return;
   }
+
+  enterChatSession(category);
+  chatBody.innerHTML = '';
+  messageLog = [];
 
   // 카테고리가 현재 유저 타입에 없으면 전체에서 찾기
   let userType = navState.userType;
@@ -767,6 +776,17 @@ async function sendMessage() {
   inputField.value = '';
   document.getElementById('sendBtn').disabled = true;
   chatBody.querySelectorAll('.quick-replies').forEach(el => el.remove());
+
+  // 조회 중인 세션에 새 메시지 → 스토리지에서 기존 세션 제거 (새 시간으로 업데이트)
+  if (resumedSessionId) {
+    const sessions = JSON.parse(localStorage.getItem('chatbot_sessions') || '[]');
+    const filtered = sessions.filter(s => s.id !== resumedSessionId);
+    localStorage.setItem('chatbot_sessions', JSON.stringify(filtered));
+    resumedSessionId = null;
+    sessionDate = null;
+    sessionTime = null;
+  }
+
   addUserMsg(text);
 
   if (csInquiryMode) {
@@ -823,7 +843,16 @@ async function startWelcome() {
 
 // ===== New Chat =====
 function newChat() {
-  saveSession();
+  // 조회만 한 세션은 저장하지 않고, 그냥 넘어감
+  if (!resumedSessionId) {
+    saveSession();
+  }
+  resumedSessionId = null;
+  inChatSession = false;
+  backBtn.style.display = 'none';
+  backBtn.onclick = null;
+  headerTitle.textContent = '미니인턴 AI 챗봇';
+  historyBtn.style.display = '';
   chatBody.innerHTML = '';
   messageLog = [];
   startWelcome();
@@ -844,13 +873,53 @@ function saveSession() {
     id: Date.now().toString(),
     title,
     preview,
-    date: now.toLocaleDateString('ko-KR'),
-    time: now.toTimeString().slice(0, 8),
+    date: sessionDate || now.toLocaleDateString('ko-KR'),
+    time: sessionTime || now.toTimeString().slice(0, 8),
     messages: [...messageLog]
   });
 
   localStorage.setItem('chatbot_sessions', JSON.stringify(sessions));
   messageLog = [];
+  sessionDate = null;
+  sessionTime = null;
+}
+
+// ===== Chat Session Depth (롤백 시 이 블록 제거) =====
+let inChatSession = false;
+
+function enterChatSession(title) {
+  if (inChatSession) return;
+  inChatSession = true;
+
+  // 헤더 변경: 뒤로가기 + 제목, 채팅내역 숨김
+  backBtn.style.display = 'flex';
+  backBtn.onclick = exitChatSession;
+  headerTitle.textContent = title;
+  historyBtn.style.display = 'none';
+}
+
+function exitChatSession() {
+  if (!inChatSession) return;
+  inChatSession = false;
+
+  // 현재 대화 저장
+  if (messageLog.length > 0 && !resumedSessionId) {
+    saveSession();
+  }
+  resumedSessionId = null;
+
+  // 헤더 복원
+  backBtn.style.display = 'none';
+  backBtn.onclick = null;
+  headerTitle.textContent = '미니인턴 AI 챗봇';
+  historyBtn.style.display = '';
+
+  // 웰컴 화면 새로 생성 (유저 선택 흔적 없이 깨끗하게)
+  chatBody.innerHTML = '';
+  messageLog = [];
+  navState = { userType: '구직자', category: null };
+  hideInput();
+  startWelcome();
 }
 
 // ===== Tab Switching =====
@@ -860,10 +929,16 @@ function switchTab(tab) {
     chatBody.style.display = '';
     historyPanel.style.display = 'none';
     inputBar.style.display = '';
-    historyBtn.style.display = '';
-    backBtn.style.display = 'none';
-    backBtn.onclick = null;
-    headerTitle.textContent = '미니인턴 AI 챗봇';
+    if (inChatSession) {
+      historyBtn.style.display = 'none';
+      backBtn.style.display = 'flex';
+      backBtn.onclick = exitChatSession;
+    } else {
+      historyBtn.style.display = '';
+      backBtn.style.display = 'none';
+      backBtn.onclick = null;
+      headerTitle.textContent = '미니인턴 AI 챗봇';
+    }
   } else {
     chatBody.style.display = 'none';
     historyPanel.style.display = '';
@@ -888,8 +963,8 @@ function getCurrentSession() {
     id: '_current',
     title,
     preview,
-    date: now.toLocaleDateString('ko-KR'),
-    time: now.toTimeString().slice(0, 8),
+    date: sessionDate || now.toLocaleDateString('ko-KR'),
+    time: sessionTime || now.toTimeString().slice(0, 8),
   };
 }
 
@@ -924,6 +999,8 @@ function renderHistoryList() {
 }
 
 // ===== Resume Session =====
+let resumedSessionId = null;  // 조회 중인 세션 ID (수정 없이 조회만 할 때 보존)
+
 function resumeSession(id) {
   if (id === '_current') { switchTab('chat'); return; }
 
@@ -933,13 +1010,16 @@ function resumeSession(id) {
 
   const session = sessions[idx];
 
-  saveSession();
-  const updated = JSON.parse(localStorage.getItem('chatbot_sessions') || '[]');
-  const newIdx = updated.findIndex(s => s.id === id);
-  if (newIdx !== -1) updated.splice(newIdx, 1);
-  localStorage.setItem('chatbot_sessions', JSON.stringify(updated));
+  // 현재 진행 중인 대화가 있으면 저장
+  if (messageLog.length > 0 && !resumedSessionId) {
+    saveSession();
+  }
 
+  // 조회만 하는 것이므로 스토리지에서 삭제하지 않음
+  resumedSessionId = id;
   messageLog = [...session.messages];
+  sessionDate = session.date;
+  sessionTime = session.time;
 
   chatBody.innerHTML = '';
   session.messages.forEach(msg => {
@@ -959,7 +1039,15 @@ function resumeSession(id) {
     }
   });
 
+  // 세션 제목으로 chat session 진입
+  inChatSession = true;
+  backBtn.style.display = 'flex';
+  backBtn.onclick = exitChatSession;
+  headerTitle.textContent = session.title;
+  historyBtn.style.display = 'none';
+
   switchTab('chat');
+  hideInput();
   scrollBottom();
 }
 
@@ -1000,7 +1088,9 @@ function toggleChat() {
 
 // ===== Auto-save on page unload =====
 window.addEventListener('beforeunload', () => {
-  saveSession();
+  if (!resumedSessionId) {
+    saveSession();
+  }
 });
 
 // ===== Start =====
