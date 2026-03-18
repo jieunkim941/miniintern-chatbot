@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미니인턴 AI 챗봇 — UI Cases</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="styles.css">
+<style>
+  body { background: #E8EAED; padding: 40px; align-items: flex-start; flex-wrap: wrap; gap: 32px; min-height: auto; }
+  .case-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .case-label { font-family: var(--font-family); font-size: 13px; font-weight: 700; color: var(--gray-700); }
+  .phone { height: 680px; flex-shrink: 0; }
+  .back-btn { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- SVG icons as reusable vars -->
+<script>
+const BOT36 = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MDAgNzAwIiB3aWR0aD0iMzYiIGhlaWdodD0iMzYiPgogIDxyZWN0IHdpZHRoPSI3MDAiIGhlaWdodD0iNzAwIiByeD0iMzUwIiBmaWxsPSIjMTdBMUZGIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODcuNSw2MTIuNSkgc2NhbGUoMC4wNzUsLTAuMDc1KSIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSJub25lIj4KICAgIDxwYXRoIGQ9Ik0yOTUwIDU3OTMgbC0xIC0zMjggLTI5OSAtMjQ0IC0yOTkgLTI0NCA2NyAtNTUgYzM3IC0zMCAxNzIgLTE0MCAzMDAKLTI0NSBsMjMyIC0xOTAgMCAtNzEzIDAgLTcxNCAtNDM1IDAgLTQzNSAwIDAgMTUzMCAwIDE1MzAgNDM1IDAgNDM1IDAgMCAtMzI3egptMTk2OSAwIGwwIC0zMjggLTMwMSAtMjQ0IGMtMjM4IC0xOTUgLTI5NyAtMjQ3IC0yODYgLTI1NSA4IC02IDE0NCAtMTE3IDMwMQotMjQ1IGwyODcgLTIzNSAwIC03MTMgMCAtNzEzIC00MzUgMCAtNDM1IDAgMCAxNTMwIDAgMTUzMCA0MzUgMCA0MzUgMCAtMQotMzI3eiBtLTMzMjQgLTMyNDggYzQwOCAtNDkyIDk1NyAtNzk2IDE2MDAgLTg4NyAxMzQgLTE5IDUwMyAtMTYgNjQ2IDUgNTk4Cjg5IDExMzEgMzgzIDE1MzAgODQ0IDUyIDYwIDk4IDEwOCAxMDQgMTA3IDE0IC0xIDUzNCAtMzY3IDUzNSAtMzc2IDAgLTE1Ci0xNDUgLTE4NCAtMjY0IC0zMDcgLTUyMyAtNTM1IC0xMjA0IC04NTkgLTE5NjEgLTkzMiAtMTk1IC0xOSAtNTg2IC02IC03NzUKMjQgLTYyMSAxMDIgLTExNjcgMzYzIC0xNjMyIDc4MSAtMTAyIDkyIC0zMDggMzE3IC0zNjQgMzk4IC0yNyAzOCAtMjcgMzkgLTgKNTIgMzcyIDI2MyA1MjAgMzY2IDUyNSAzNjQgMyAtMiAzMiAtMzQgNjQgLTczeiIvPgogIDwvZz4KPC9zdmc+Cg==";
+// Write all images after DOM loaded
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.bot-img-36').forEach(el => { el.src = BOT36; });
+  document.querySelectorAll('.bot-img-28').forEach(el => { el.src = BOT36; });
+});
+</script>
+
+<!-- ===== Case 1: 웰컴 ===== -->
+<div class="case-wrap">
+  <div class="case-label">1. 웰컴 (초기 상태)</div>
+  <div class="phone">
+    <div class="header">
+      <div class="avatar"><img class="bot-img-36" width="36" height="36" style="border-radius:50%;"></div>
+      <div class="header-name">미니인턴 AI 챗봇</div>
+      <button class="history-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg></button>
+    </div>
+    <div class="chat-body">
+      <div class="msg-row"><div class="msg-avatar"><img class="bot-img-28" width="28" height="28" style="border-radius:50%;"></div><div class="msg-bubble bot">안녕하세요! 미니인턴 AI 챗봇입니다 😊</div></div>
+      <div class="msg-row"><div class="msg-avatar"><img class="bot-img-28" width="28" height="28" style="border-radius:50%;"></div><div class="msg-bubble bot">미니인턴 이용에 궁금한 점이 있으면 편하게 물어보세요!</div></div>
+      <div class="quick-replies"><button class="chip">미니인턴이 뭔가요?</button><button class="chip">인턴 공고 보고 싶어요</button><button class="chip">해피폴리오가 뭔가요?</button><button class="chip">미니인턴은 무료인가요?</button></div>
+    </div>
+    <div class="input-bar"><input class="input-field" type="text" placeholder="메시지를 입력하세요..."><button class="send-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg></button></div>
+  </div>
+</div>
+
+<!-- ===== Case 2: FAQ 매칭 답변 ===== -->
+<div class="case-wrap">
+  <div class="case-label">2. FAQ 매칭 답변</div>
+  <div class="phone">
+    <div class="header">
+      <div class="avatar"><img class="bot-img-36" width="36" height="36" style="border-radius:50%;"></div>
+      <div class="header-name">미니인턴 AI 챗봇</div>
+      <button class="history-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg></button>
+    </div>
+    <div class="chat-body">
+      <div class="msg-row user"><div class="msg-avatar">나</div><div class="msg-bubble user">미니인턴이 뭔가요?</div></div>
+      <div class="msg-row"><div class="msg-avatar"><img class="bot-img-28" width="28" height="28" style="border-radius:50%;"></div><div class="msg-bubble bot">미니인턴은 대학생과 취준생을 위한 커리어 성장 플랫폼이에요.<br><br>실무 경험을 쌓을 수 있는 인턴십 공고, 직무 탐색, 이력서 작성 등 취업 준비에 필요한 다양한 서비스를 제공하고 있습니다.</div></div>
+      <div class="msg-row"><div class="msg-avatar"><img class="bot-img-28" width="28" height="28" style="border-radius:50%;"></div><div class="msg-bubble bot">다른 궁금한 점이 있으신가요?</div></div>
+      <div class="quick-replies"><button class="chip">미니인턴은 무료인가요?</button><button class="chip">문의는 어디로 하나요?</button><button class="chip">해피폴리오가 뭔가요?</button></div>
+    </div>
+    <div class="input-bar"><input class="input-field" type="text" placeholder="메시지를 입력하세요..."><button class="send-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg></button></div>
+  </div>
+</div>
+
+<!-- ===== Case 3: FAQ 미매칭 답변 ===== -->
+<div class="case-wrap">
+  <div class="case-label">3. FAQ 미매칭 답변</div>
+  <div class="phone">
+    <div class="header">
+      <div class="avatar"><img class="bot-img-36" width="36" height="36" style="border-radius:50%;"></div>
+      <div class="header-name">미니인턴 AI 챗봇</div>
+      <button class="history-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg></button>
+    </div>
+    <div class="chat-body">
+      <div class="msg-row user"><div class="msg-avatar">나</div><div class="msg-bubble user">점심 뭐 먹을까?</div></div>
+      <div class="msg-row"><div class="msg-avatar"><img class="bot-img-28" width="28" height="28" style="border-radius:50%;"></div><div class="msg-bubble bot">좋은 질문이에요! 미니인턴에서는 인턴십 탐색부터 지원까지 한 번에 할 수 있어요.<br><br>더 자세한 내용이 궁금하시면 홈페이지를 방문하시거나, 고객센터(help@miniintern.com)로 문의해주세요!</div></div>
+      <div class="msg-row"><div class="msg-avatar"><img class="bot-img-28" width="28" height="28" style="border-radius:50%;"></div><div class="msg-bubble bot">다른 궁금한 점이 있으신가요?</div></div>
+      <div class="quick-replies"><button class="chip">미니인턴은 무료인가요?</button><button class="chip">문의는 어디로 하나요?</button><button class="chip">해피폴리오가 뭔가요?</button></div>
+    </div>
+    <div class="input-bar"><input class="input-field" type="text" placeholder="메시지를 입력하세요..."><button class="send-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg></button></div>
+  </div>
+</div>
+
+<!-- ===== Case 4: 타이핑 인디케이터 ===== -->
+<div class="case-wrap">
+  <div class="case-label">4. 타이핑 인디케이터</div>
+  <div class="phone">
+    <div class="header">
+      <div class="avatar"><img class="bot-img-36" width="36" height="36" style="border-radius:50%;"></div>
+      <div class="header-name">미니인턴 AI 챗봇</div>
+      <button class="history-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg></button>
+    </div>
+    <div class="chat-body">
+      <div class="msg-row user"><div class="msg-avatar">나</div><div class="msg-bubble user">회원가입은 어떻게 하나요?</div></div>
+      <div class="msg-row"><div class="msg-avatar"><img class="bot-img-28" width="28" height="28" style="border-radius:50%;"></div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>
+    </div>
+    <div class="input-bar"><input class="input-field" type="text" placeholder="메시지를 입력하세요..."><button class="send-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg></button></div>
+  </div>
+</div>
+
+<!-- ===== Case 5: 대화 누적 ===== -->
+<div class="case-wrap">
+  <div class="case-label">5. 대화 누적</div>
+  <div class="phone">
+    <div class="header">
+      <div class="avatar"><img class="bot-img-36" width="36" height="36" style="border-radius:50%;"></div>
+      <div class="header-name">미니인턴 AI 챗봇</div>
+      <button class="history-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg></button>
+    </div>
+    <div class="chat-body">
+      <div class="msg-row user"><div class="msg-avatar">나</div><div class="msg-bubble user">미니인턴이 뭔가요?</div></div>
+      <div class="msg-row"><div class="msg-avatar"><img class="bot-img-28" width="28" height="28" style="border-radius:50%;"></div><div class="msg-bubble bot">미니인턴은 대학생과 취준생을 위한 커리어 성장 플랫폼이에요.<br><br>실무 경험을 쌓을 수 있는 인턴십 공고, 직무 탐색, 이력서 작성 등 취업 준비에 필요한 다양한 서비스를 제공하고 있습니다.</div></div>
+      <div class="msg-row"><div class="msg-avatar"><img class="bot-img-28" width="28" height="28" style="border-radius:50%;"></div><div class="msg-bubble bot">다른 궁금한 점이 있으신가요?</div></div>
+      <div class="msg-row user"><div class="msg-avatar">나</div><div class="msg-bubble user">해피폴리오가 뭔가요?</div></div>
+      <div class="msg-row"><div class="msg-avatar"><img class="bot-img-28" width="28" height="28" style="border-radius:50%;"></div><div class="msg-bubble bot">해피폴리오는 미니인턴의 커리어 콘텐츠 서비스예요.<br><br>직무 인터뷰, 취업 팁, 현직자 이야기 등 취업 준비에 도움이 되는 다양한 아티클을 제공합니다.</div></div>
+      <div class="msg-row"><div class="msg-avatar"><img class="bot-img-28" width="28" height="28" style="border-radius:50%;"></div><div class="msg-bubble bot">다른 궁금한 점이 있으신가요?</div></div>
+      <div class="quick-replies"><button class="chip">미니인턴은 무료인가요?</button><button class="chip">문의는 어디로 하나요?</button><button class="chip">해피폴리오가 뭔가요?</button></div>
+    </div>
+    <div class="input-bar"><input class="input-field" type="text" placeholder="메시지를 입력하세요..."><button class="send-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg></button></div>
+  </div>
+</div>
+
+<!-- ===== Case 6: 대화 내역 목록 ===== -->
+<div class="case-wrap">
+  <div class="case-label">6. 대화 내역 목록</div>
+  <div class="phone">
+    <div class="header">
+      <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+      <div class="avatar"><img class="bot-img-36" width="36" height="36" style="border-radius:50%;"></div>
+      <div class="header-name">대화 내역</div>
+    </div>
+    <div class="history-panel" style="display:flex;">
+      <div class="history-item" style="position:relative;"><div class="history-item-content"><div class="history-item-title">미니인턴이 뭔가요?</div><div class="history-item-preview">다른 궁금한 점이 있으신가요?</div><div class="history-item-date">2026. 3. 18., 14:32:05</div></div><button class="history-more-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg></button></div>
+      <div class="history-item" style="position:relative;"><div class="history-item-content"><div class="history-item-title">회원가입은 어떻게 하나요?</div><div class="history-item-preview">이메일, 카카오, 네이버 계정으로 소셜 로그인이 가능합니다.</div><div class="history-item-date">2026. 3. 18., 13:15:22</div></div><button class="history-more-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg></button></div>
+      <div class="history-item" style="position:relative;"><div class="history-item-content"><div class="history-item-title">인턴 공고 보고 싶어요</div><div class="history-item-preview">관심 직무를 설정하면 맞춤 공고 알림도 받을 수 있습니다.</div><div class="history-item-date">2026. 3. 17., 10:05:11</div></div><button class="history-more-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg></button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Case 7: 대화 내역 (비어있음) ===== -->
+<div class="case-wrap">
+  <div class="case-label">7. 대화 내역 (비어있음)</div>
+  <div class="phone">
+    <div class="header">
+      <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+      <div class="avatar"><img class="bot-img-36" width="36" height="36" style="border-radius:50%;"></div>
+      <div class="header-name">대화 내역</div>
+    </div>
+    <div class="history-panel" style="display:flex;">
+      <div class="history-empty"><div class="history-empty-icon">💬</div><div>저장된 대화가 없습니다</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Case 8: 더보기 메뉴 열림 ===== -->
+<div class="case-wrap">
+  <div class="case-label">8. 더보기 메뉴 열림</div>
+  <div class="phone">
+    <div class="header">
+      <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+      <div class="avatar"><img class="bot-img-36" width="36" height="36" style="border-radius:50%;"></div>
+      <div class="header-name">대화 내역</div>
+    </div>
+    <div class="history-panel" style="display:flex;">
+      <div class="history-item" style="position:relative;"><div class="history-item-content"><div class="history-item-title">미니인턴이 뭔가요?</div><div class="history-item-preview">다른 궁금한 점이 있으신가요?</div><div class="history-item-date">2026. 3. 18., 14:32:05</div></div><button class="history-more-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg></button><div class="history-menu" style="display:block;"><button style="color:var(--red-500);">삭제</button></div></div>
+      <div class="history-item" style="position:relative;"><div class="history-item-content"><div class="history-item-title">회원가입은 어떻게 하나요?</div><div class="history-item-preview">이메일, 카카오, 네이버 계정으로 소셜 로그인이 가능합니다.</div><div class="history-item-date">2026. 3. 18., 13:15:22</div></div><button class="history-more-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg></button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Case 9: 헤더 - 기본 ===== -->
+<div class="case-wrap">
+  <div class="case-label">9. 헤더 - 기본</div>
+  <div class="phone" style="height:auto;">
+    <div class="header">
+      <div class="avatar"><img class="bot-img-36" width="36" height="36" style="border-radius:50%;"></div>
+      <div class="header-name">미니인턴 AI 챗봇</div>
+      <button class="history-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Case 10: 헤더 - 대화 내역 ===== -->
+<div class="case-wrap">
+  <div class="case-label">10. 헤더 - 대화 내역</div>
+  <div class="phone" style="height:auto;">
+    <div class="header">
+      <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+      <div class="avatar"><img class="bot-img-36" width="36" height="36" style="border-radius:50%;"></div>
+      <div class="header-name">대화 내역</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</body>
+</html>
