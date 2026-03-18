@@ -12,6 +12,17 @@ let currentTab = 'chat';
 let csInquiryMode = false;
 let navState = { userType: null, category: null };
 
+// ===== Input bar show/hide =====
+function hideInput() {
+  inputBar.style.display = 'none';
+}
+function showInput() {
+  inputBar.style.display = '';
+  inputField.disabled = false;
+  inputField.placeholder = '메시지를 입력하세요...';
+  inputField.focus();
+}
+
 // =============================================================
 //  FAQ Tree — 시나리오 기반 데이터
 //  ※ 동적 정보 조회형: 날짜는 샘플 데이터입니다.
@@ -171,7 +182,6 @@ const FAQ_TREE = {
             question: '구매한 콘텐츠 다운로드가 안 돼요',
             answerType: 'contact',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>다운로드가 원활하지 않다면 아래를 시도해 주세요.<br><br>• <b>PDF 파일이 열리지 않는 경우</b><br>기기에 PDF 뷰어(Adobe Acrobat Reader, Chrome 등)가 설치되어 있는지 확인해 주세요.<br><br>• <b>일반 다운로드 오류</b><br>다른 브라우저에서 재시도 / 캐시 삭제 후 재시도<br><br>• <b>카카오톡·SNS 앱 내 다운로드 시 파일이 안 보이는 경우</b><br>링크를 복사하여 Chrome, Safari 등 웹 브라우저에서 열어서 다운로드를 재시도해 주세요.<br><br>문제가 지속되면 아래 채널로 문의해 주세요.',
-            contactEmail: 'mkt@openknowl.com',
             keywords: ['다운로드', '오류', '안돼', '안 돼', '열리지']
           }
         ]
@@ -421,11 +431,7 @@ async function renderAnswer(questionObj, showThinking = false) {
 
   switch (questionObj.answerType) {
     case 'contact':
-      if (questionObj.contactEmail) {
-        addCsCardWithEmail(questionObj.contactEmail);
-      } else {
-        addCsCard();
-      }
+      addContactCard();
       break;
     case 'dynamic':
       // devComment는 개발 문서 참고용 — 챗봇 UI에는 출력하지 않음
@@ -543,26 +549,46 @@ function addCsCard() {
   scrollBottom();
 }
 
-function addCsCardWithEmail(email) {
+function addContactCard() {
   const row = document.createElement('div');
   row.className = 'msg-row';
   row.innerHTML = `
     <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
-    <div class="cs-card">
-      <div class="cs-card-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"/></svg>
-        <span>문의하기</span>
+    <div class="contact-card">
+      <div class="contact-card-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"/></svg>
+        운영팀 문의 채널
       </div>
-      <p class="cs-card-desc">아래 이메일로 문의해 주세요.</p>
-      <div class="cs-card-actions">
-        <a href="mailto:${email}" class="cs-btn cs-btn-primary" style="text-decoration:none;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z"/></svg>
-          ${email}
-        </a>
+      <div class="contact-card-list">
+        <div class="contact-row" onclick="copyText('help@miniintern.com', this)">
+          <span class="contact-label">이메일</span>
+          <span class="contact-value">help@miniintern.com</span>
+          <svg class="contact-copy" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"/></svg>
+        </div>
+        <div class="contact-row" onclick="copyText('010-0000-0000', this)">
+          <span class="contact-label">연락처</span>
+          <span class="contact-value">010-0000-0000</span>
+          <svg class="contact-copy" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"/></svg>
+        </div>
       </div>
     </div>`;
   chatBody.appendChild(row);
   scrollBottom();
+}
+
+function copyText(text, el) {
+  navigator.clipboard.writeText(text).then(() => {
+    const valueEl = el.querySelector('.contact-value');
+    if (valueEl) {
+      const original = valueEl.textContent;
+      valueEl.textContent = '복사 완료!';
+      valueEl.classList.add('copied');
+      setTimeout(() => {
+        valueEl.textContent = original;
+        valueEl.classList.remove('copied');
+      }, 1500);
+    }
+  });
 }
 
 async function sendChatHistory() {
@@ -581,6 +607,7 @@ async function startCsInquiry() {
   });
   csInquiryMode = true;
   await addBotMsg('운영팀에게 보낼 문의사항을 작성해주세요.');
+  showInput();
 }
 
 // ===== Tree Navigation =====
@@ -591,12 +618,13 @@ function handleUserTypeSelect(type) {
 
   const categories = Object.keys(FAQ_TREE[key].categories);
   addBotMsg('궁금한 카테고리를 선택해주세요!');
-  addQuickReplies([...categories, '직접 입력하기'], handleCategorySelect);
+  addQuickReplies([...categories, '직접 입력'], handleCategorySelect);
 }
 
-function handleCategorySelect(category) {
-  if (category === '직접 입력하기') {
-    addBotMsg('궁금한 내용을 직접 입력해주세요!');
+async function handleCategorySelect(category) {
+  if (category === '직접 입력') {
+    await addBotMsg('궁금한 내용을 직접 입력해주세요!');
+    showInput();
     return;
   }
 
@@ -615,16 +643,22 @@ function handleCategorySelect(category) {
   navState.category = category;
   const questions = FAQ_TREE[userType].categories[category].questions.map(q => q.question);
 
-  addBotMsg(`<b>${category}</b> 관련 질문이에요. 원하시는 질문을 선택해주세요!`);
-  addQuickReplies([...questions, '다른 카테고리 보기'], handleQuestionSelect);
+  await addBotMsg(`<b>${category}</b> 관련 질문이에요. 원하시는 질문을 선택해주세요!`);
+  addQuickReplies([...questions, '다른게 궁금해요', '직접 입력'], handleQuestionSelect);
 }
 
 async function handleQuestionSelect(questionText) {
+  if (questionText === '직접 입력') {
+    await addBotMsg('궁금한 내용을 직접 입력해주세요!');
+    showInput();
+    return;
+  }
+
   if (questionText === '다른 카테고리 보기') {
     if (navState.userType) {
       const categories = Object.keys(FAQ_TREE[navState.userType].categories);
       await addBotMsg('카테고리를 선택해주세요!');
-      addQuickReplies([...categories, '직접 입력하기'], handleCategorySelect);
+      addQuickReplies([...categories, '직접 입력'], handleCategorySelect);
     } else {
       showUserTypeSelection();
     }
@@ -635,7 +669,7 @@ async function handleQuestionSelect(questionText) {
     navState = { userType: '구직자', category: null };
     await addBotMsg('처음으로 돌아갑니다!');
     const categories = Object.keys(FAQ_TREE['구직자'].categories);
-    addQuickReplies([...categories, '직접 입력하기'], handleCategorySelect);
+    addQuickReplies([...categories, '직접 입력'], handleCategorySelect);
     return;
   }
 
@@ -670,15 +704,17 @@ function showPostAnswerChips() {
     catQuestions.forEach(q => chips.push(q.question));
   }
 
-  chips.push('다른게 궁금해요');
+  chips.push('다른게 궁금해요', '직접 입력');
   addQuickReplies(chips, handlePostAnswerAction);
 }
 
 async function handlePostAnswerAction(action) {
-  if (action === '다른게 궁금해요') {
+  if (action === '직접 입력') {
+    await addBotMsg('궁금한 내용을 직접 입력해주세요!');
+    showInput();
+  } else if (action === '다른게 궁금해요') {
     handleQuestionSelect('다른 카테고리 보기');
   } else {
-    // It's a question text
     handleQuestionSelect(action);
   }
 }
@@ -735,11 +771,14 @@ async function sendMessage() {
 
   if (csInquiryMode) {
     csInquiryMode = false;
+    hideInput();
     await addBotMsg('이 내용으로 문의를 작성할게요.');
     await addBotMsg('운영팀에 문의가 전송되었습니다! 담당자가 확인 후 연락드릴게요.');
     showPostAnswerChips();
     return;
   }
+
+  hideInput();
 
   // CS 테스트 트리거
   if (text.replace(/\s/g, '').toLowerCase() === 'cs테스트') {
@@ -775,10 +814,11 @@ async function handleUserInput(text, showThinking = false) {
 // ===== Welcome Flow =====
 async function startWelcome() {
   navState = { userType: '구직자', category: null };
+  hideInput();
   await addBotMsg('안녕하세요! 미니인턴 AI 챗봇입니다 😊', 600);
   await addBotMsg('궁금한 카테고리를 선택해주세요!', 600);
   const categories = Object.keys(FAQ_TREE['구직자'].categories);
-  addQuickReplies([...categories, '직접 입력하기'], handleCategorySelect);
+  addQuickReplies([...categories, '직접 입력'], handleCategorySelect);
 }
 
 // ===== New Chat =====
