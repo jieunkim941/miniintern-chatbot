@@ -427,33 +427,6 @@ async function sendChatHistoryEmail() {
   showPostAnswerChips();
 }
 
-function addEmailInquiryCard() {
-  const subject = encodeURIComponent('[기업회원 문의] ');
-  const body = encodeURIComponent('안녕하세요, 미니인턴 운영팀에 문의드립니다.\n\n문의 내용:\n\n');
-  const row = document.createElement('div');
-  row.className = 'msg-row';
-  row.innerHTML = `
-    <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
-    <div class="cs-card">
-      <div class="cs-card-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z"/></svg>
-        <span>운영팀에 메일 문의하기</span>
-      </div>
-      <p class="cs-card-desc">문의 내용이 포함된 메일이 자동으로 작성됩니다.<br>보내기만 눌러주세요!</p>
-      <div class="cs-card-actions">
-        <a href="mailto:help@miniintern.com?subject=${subject}&body=${body}" class="cs-btn cs-btn-primary" style="text-decoration:none;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
-          메일 보내기
-        </a>
-        <button class="cs-btn cs-btn-secondary" onclick="dismissEmailInquiry()">
-          다음에 할게요
-        </button>
-      </div>
-    </div>`;
-  chatBody.appendChild(row);
-  scrollBottom();
-}
-
 async function dismissEmailInquiry() {
   chatBody.querySelectorAll('.cs-card').forEach(el => {
     const r = el.closest('.msg-row');
@@ -720,21 +693,14 @@ async function sendMessage() {
     return;
   }
 
-  // 두번째로 어려운 질문 트리거 — 대화 내역을 메일로 전송
-  if (text === '두번째로 어려운 질문') {
+  // 어려운 질문 트리거 — 대화 내역을 메일로 전송
+  if (text === '어려운 질문') {
     await addBotMsg('해당 질문은 AI가 바로 답변드리기 어려운 내용이에요.', 600, true);
     await addBotMsg('지금까지의 대화 내용을 운영팀에 전달해드릴게요.<br>아래 버튼을 누르시면 대화 내역이 포함된 메일이 바로 전송됩니다.');
     addChatHistoryEmailCard();
     return;
   }
 
-  // 어려운 질문 트리거 — AI가 답변하기 어려운 질문 → 운영팀 메일 전송 플로우
-  if (text === '어려운 질문') {
-    await addBotMsg('해당 질문은 AI가 바로 답변드리기 어려운 내용이에요.', 600, true);
-    await addBotMsg('운영팀에 직접 문의하시면 빠르게 도움받으실 수 있어요!<br>아래 버튼을 눌러 문의 내용을 메일로 보내주세요.');
-    addEmailInquiryCard();
-    return;
-  }
 
   // Keyword search across entire tree
   const faq = findFaqAnswer(text);
