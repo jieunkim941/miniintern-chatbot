@@ -13,6 +13,7 @@ let csInquiryMode = false;
 let navState = { userType: null, category: null };
 let sessionDate = null;  // 세션 최초 생성 시간 보존
 let sessionTime = null;
+let isLoggedIn = false;
 
 // ===== Input bar show/hide =====
 function hideInput() {
@@ -39,6 +40,7 @@ const FAQ_TREE = {
         questions: [
           {
             question: '기업 정보(로고, 소개)를 수정하고 싶어요',
+            requiresLogin: true,
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관 설정 > 기업 프로필에서 로고·소개 등을 수정하실 수 있습니다.<br><br>감사합니다.',
             imagePlaceholder: '기업 프로필 수정 화면 안내 스크린샷',
@@ -46,6 +48,7 @@ const FAQ_TREE = {
           },
           {
             question: '퇴사한 담당자 권한을 제거하고 싶어요',
+            requiresLogin: true,
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관 설정 > 멤버 관리에서 해당 담당자의 권한을 [퇴사]로 변경해 주시면 됩니다.<br><br>감사합니다.',
             imagePlaceholder: '권한 변경 화면 안내 스크린샷',
@@ -59,6 +62,7 @@ const FAQ_TREE = {
           },
           {
             question: '담당자를 추가로 초대하고 싶어요',
+            requiresLogin: true,
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관 설정 > 멤버 관리 > [초대] 버튼을 통해 추가 담당자를 초대할 수 있습니다.<br><br>감사합니다.',
             imagePlaceholder: '멤버 초대 화면 안내 스크린샷',
@@ -86,6 +90,7 @@ const FAQ_TREE = {
         questions: [
           {
             question: '지원자 이력서와 기획안은 어디서 확인하나요?',
+            requiresLogin: true,
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관리 > 지원자 목록 > 해당 지원자 클릭 시 이력서와 기획안을 열람할 수 있습니다.<br><br>감사합니다.',
             imagePlaceholder: '지원자 상세 열람 화면 안내 스크린샷',
@@ -93,6 +98,7 @@ const FAQ_TREE = {
           },
           {
             question: '지원자 평가 상태는 어떻게 변경하나요?',
+            requiresLogin: true,
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>평가 상태는 미열람 > 검토중 > 서류합격 > 최종합격 / 불합격 순으로 변경 가능합니다.<br>기업회원 메인 > 지원자 관리 > [평가하기]에서 진행하세요.<br><br>감사합니다.',
             imagePlaceholder: '평가 상태 변경 화면 안내 스크린샷',
@@ -104,6 +110,7 @@ const FAQ_TREE = {
         questions: [
           {
             question: '채용 수수료는 얼마인가요?',
+            requiresLogin: true,
             answerType: 'text',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관을 통해 정규직·계약직 전환 시 계약 연봉의 6% 수수료가 발생합니다.<br>수습 기간 중에는 별도 비용이 발생하지 않습니다.<br><br>감사합니다.',
             keywords: ['수수료', '비용', '얼마', '가격']
@@ -120,12 +127,14 @@ const FAQ_TREE = {
         questions: [
           {
             question: '등록한 공고를 수정하거나 마감할 수 있나요?',
+            requiresLogin: true,
             answerType: 'text',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관리 > 공고 목록 > 해당 공고 선택 > [수정] 또는 [마감] 버튼을 이용해 주세요.<br><br>감사합니다.',
             keywords: ['공고', '수정', '마감', '변경']
           },
           {
             question: '채용공고는 어떻게 등록하나요?',
+            requiresLogin: true,
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>recruitment.miniintern.com 접속 > 채용관리 > [공고 등록] 버튼을 눌러 진행해 주세요.<br><br>감사합니다.',
             imagePlaceholder: '공고 등록 화면 안내 스크린샷',
@@ -498,6 +507,33 @@ async function startCsInquiry() {
   showInput();
 }
 
+// ===== Login Prompt =====
+function addLoginPrompt() {
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+  row.innerHTML = `
+    <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+    <div class="msg-bubble bot login-prompt-bubble">
+      <div>로그인 유저에 한해 답변 가능한 내용입니다. 로그인 후 다시 질문해 주세요.</div>
+      <button class="cs-btn cs-btn-primary" onclick="handleLogin()" style="margin-top:12px; width:100%;">로그인하기</button>
+    </div>`;
+  chatBody.appendChild(row);
+  messageLog.push({ type: 'bot', text: '로그인 유저에 한해 답변 가능한 내용입니다.' });
+  scrollBottom();
+}
+
+async function handleLogin() {
+  // 프로토타입: 실제로는 로그인 페이지로 이동
+  // 여기서는 로그인 상태만 토글
+  isLoggedIn = true;
+  chatBody.querySelectorAll('.cs-card').forEach(el => {
+    const r = el.closest('.msg-row');
+    if (r) r.remove();
+  });
+  await addBotMsg('로그인되었습니다! 이제 모든 질문에 답변받으실 수 있어요.');
+  showPostAnswerChips();
+}
+
 // ===== Tree Navigation =====
 function handleUserTypeSelect(type) {
   const key = '기업회원';
@@ -511,6 +547,10 @@ function handleUserTypeSelect(type) {
 
 async function handleCategorySelect(category) {
   if (category === '직접 입력') {
+    if (!isLoggedIn) {
+      addLoginPrompt();
+      return;
+    }
     enterChatSession('직접 입력');
     chatBody.innerHTML = '';
     messageLog = [];
@@ -544,6 +584,10 @@ async function handleCategorySelect(category) {
 
 async function handleQuestionSelect(questionText) {
   if (questionText === '직접 입력') {
+    if (!isLoggedIn) {
+      addLoginPrompt();
+      return;
+    }
     await addBotMsg('궁금한 내용을 직접 입력해주세요!');
     showInput();
     return;
@@ -568,8 +612,15 @@ async function handleQuestionSelect(questionText) {
     return;
   }
 
+  // 로그인 필요 질문 체크
+  const qObjCheck = findQuestionObj(questionText);
+  if (qObjCheck && qObjCheck.requiresLogin && !isLoggedIn) {
+    addLoginPrompt();
+    return;
+  }
+
   // Find the question object in the tree
-  const qObj = findQuestionObj(questionText);
+  const qObj = qObjCheck;
   if (qObj) {
     await renderAnswer(qObj);
     showPostAnswerChips();
@@ -605,6 +656,10 @@ function showPostAnswerChips() {
 
 async function handlePostAnswerAction(action) {
   if (action === '직접 입력') {
+    if (!isLoggedIn) {
+      addLoginPrompt();
+      return;
+    }
     await addBotMsg('궁금한 내용을 직접 입력해주세요!');
     showInput();
   } else if (action === '다른게 궁금해요') {
@@ -680,6 +735,15 @@ async function sendMessage() {
     hideInput();
     await addBotMsg('이 내용으로 문의를 작성할게요.');
     await addBotMsg('운영팀에 문의가 전송되었습니다! 담당자가 확인 후 연락드릴게요.');
+    showPostAnswerChips();
+    return;
+  }
+
+  // 로그인 토글 트리거 (프로토타입 테스트용)
+  if (text === '로그인') {
+    isLoggedIn = !isLoggedIn;
+    hideInput();
+    await addBotMsg(isLoggedIn ? '로그인 상태로 전환되었습니다.' : '비로그인 상태로 전환되었습니다.');
     showPostAnswerChips();
     return;
   }

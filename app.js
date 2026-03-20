@@ -13,6 +13,7 @@ let csInquiryMode = false;
 let navState = { userType: null, category: null };
 let sessionDate = null;  // 세션 최초 생성 시간 보존
 let sessionTime = null;
+let isLoggedIn = false;
 
 // ===== Input bar show/hide =====
 function hideInput() {
@@ -108,6 +109,7 @@ const FAQ_TREE = {
         questions: [
           {
             question: '이력서는 어디서 등록하나요?',
+            requiresLogin: true,
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>마이페이지 > 이력서 탭에서 등록 및 수정하실 수 있습니다.<br><br>감사합니다.',
             imagePlaceholder: '마이페이지 이력서 탭 위치 안내 스크린샷',
@@ -182,6 +184,7 @@ const FAQ_TREE = {
           },
           {
             question: '구매한 콘텐츠 다운로드가 안 돼요',
+            requiresLogin: true,
             answerType: 'contact',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>다운로드가 원활하지 않다면 아래를 시도해 주세요.<br><br>• <b>PDF 파일이 열리지 않는 경우</b><br>기기에 PDF 뷰어(Adobe Acrobat Reader, Chrome 등)가 설치되어 있는지 확인해 주세요.<br><br>• <b>일반 다운로드 오류</b><br>다른 브라우저에서 재시도 / 캐시 삭제 후 재시도<br><br>• <b>카카오톡·SNS 앱 내 다운로드 시 파일이 안 보이는 경우</b><br>링크를 복사하여 Chrome, Safari 등 웹 브라우저에서 열어서 다운로드를 재시도해 주세요.<br><br>문제가 지속되면 아래 채널로 문의해 주세요.',
             keywords: ['다운로드', '오류', '안돼', '안 돼', '열리지']
@@ -612,6 +615,33 @@ async function startCsInquiry() {
   showInput();
 }
 
+// ===== Login Prompt =====
+function addLoginPrompt() {
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+  row.innerHTML = `
+    <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+    <div class="msg-bubble bot login-prompt-bubble">
+      <div>로그인 유저에 한해 답변 가능한 내용입니다. 로그인 후 다시 질문해 주세요.</div>
+      <button class="cs-btn cs-btn-primary" onclick="handleLogin()" style="margin-top:12px; width:100%;">로그인하기</button>
+    </div>`;
+  chatBody.appendChild(row);
+  messageLog.push({ type: 'bot', text: '로그인 유저에 한해 답변 가능한 내용입니다.' });
+  scrollBottom();
+}
+
+async function handleLogin() {
+  // 프로토타입: 실제로는 로그인 페이지로 이동
+  // 여기서는 로그인 상태만 토글
+  isLoggedIn = true;
+  chatBody.querySelectorAll('.cs-card').forEach(el => {
+    const r = el.closest('.msg-row');
+    if (r) r.remove();
+  });
+  await addBotMsg('로그인되었습니다! 이제 모든 질문에 답변받으실 수 있어요.');
+  showPostAnswerChips();
+}
+
 // ===== Tree Navigation =====
 function handleUserTypeSelect(type) {
   const key = type === '구직자 (취준생)' ? '구직자' : '기업회원';
@@ -625,6 +655,10 @@ function handleUserTypeSelect(type) {
 
 async function handleCategorySelect(category) {
   if (category === '직접 입력') {
+    if (!isLoggedIn) {
+      addLoginPrompt();
+      return;
+    }
     enterChatSession('직접 입력');
     chatBody.innerHTML = '';
     messageLog = [];
@@ -658,6 +692,10 @@ async function handleCategorySelect(category) {
 
 async function handleQuestionSelect(questionText) {
   if (questionText === '직접 입력') {
+    if (!isLoggedIn) {
+      addLoginPrompt();
+      return;
+    }
     await addBotMsg('궁금한 내용을 직접 입력해주세요!');
     showInput();
     return;
@@ -682,8 +720,15 @@ async function handleQuestionSelect(questionText) {
     return;
   }
 
+  // 로그인 필요 질문 체크
+  const qObjCheck = findQuestionObj(questionText);
+  if (qObjCheck && qObjCheck.requiresLogin && !isLoggedIn) {
+    addLoginPrompt();
+    return;
+  }
+
   // Find the question object in the tree
-  const qObj = findQuestionObj(questionText);
+  const qObj = qObjCheck;
   if (qObj) {
     await renderAnswer(qObj);
     showPostAnswerChips();
@@ -719,6 +764,10 @@ function showPostAnswerChips() {
 
 async function handlePostAnswerAction(action) {
   if (action === '직접 입력') {
+    if (!isLoggedIn) {
+      addLoginPrompt();
+      return;
+    }
     await addBotMsg('궁금한 내용을 직접 입력해주세요!');
     showInput();
   } else if (action === '다른게 궁금해요') {
@@ -794,6 +843,15 @@ async function sendMessage() {
     hideInput();
     await addBotMsg('이 내용으로 문의를 작성할게요.');
     await addBotMsg('운영팀에 문의가 전송되었습니다! 담당자가 확인 후 연락드릴게요.');
+    showPostAnswerChips();
+    return;
+  }
+
+  // 로그인 토글 트리거 (프로토타입 테스트용)
+  if (text === '로그인') {
+    isLoggedIn = !isLoggedIn;
+    hideInput();
+    await addBotMsg(isLoggedIn ? '로그인 상태로 전환되었습니다.' : '비로그인 상태로 전환되었습니다.');
     showPostAnswerChips();
     return;
   }
