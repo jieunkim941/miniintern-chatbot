@@ -14,6 +14,7 @@ let navState = { userType: null, category: null };
 let sessionDate = null;  // 세션 최초 생성 시간 보존
 let sessionTime = null;
 let isLoggedIn = false;
+let pendingLoginQuestion = null;
 
 // ===== Input bar show/hide =====
 function hideInput() {
@@ -524,13 +525,18 @@ function addLoginPrompt() {
 
 async function handleLogin() {
   // 프로토타입: 실제로는 로그인 페이지로 이동
-  // 여기서는 로그인 상태만 토글
   isLoggedIn = true;
-  chatBody.querySelectorAll('.cs-card').forEach(el => {
+  chatBody.querySelectorAll('.login-prompt-bubble').forEach(el => {
     const r = el.closest('.msg-row');
     if (r) r.remove();
   });
-  await addBotMsg('로그인되었습니다! 이제 모든 질문에 답변받으실 수 있어요.');
+  await addBotMsg('로그인되었습니다!');
+
+  if (pendingLoginQuestion) {
+    const q = pendingLoginQuestion;
+    pendingLoginQuestion = null;
+    await renderAnswer(q);
+  }
   showPostAnswerChips();
 }
 
@@ -615,6 +621,7 @@ async function handleQuestionSelect(questionText) {
   // 로그인 필요 질문 체크
   const qObjCheck = findQuestionObj(questionText);
   if (qObjCheck && qObjCheck.requiresLogin && !isLoggedIn) {
+    pendingLoginQuestion = qObjCheck;
     addLoginPrompt();
     return;
   }
