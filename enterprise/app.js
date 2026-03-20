@@ -403,9 +403,9 @@ function addChatHistoryEmailCard() {
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
         <span>대화 내역 메일 전송</span>
       </div>
-      <p class="cs-card-desc">지금까지의 대화 내용이 운영팀에 자동 전송됩니다.</p>
+      <p class="cs-card-desc">지금까지의 대화 내용이 운영팀(example@miniintern.com)에 자동 전송됩니다.</p>
       <div class="cs-card-actions">
-        <button class="cs-btn cs-btn-primary" onclick="sendChatHistoryEmail()">
+        <button class="cs-btn cs-btn-primary" onclick="sendChatHistoryEmailDemo()">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
           대화 내역 전송하기
         </button>
@@ -418,12 +418,13 @@ function addChatHistoryEmailCard() {
   scrollBottom();
 }
 
-async function sendChatHistoryEmail() {
+async function sendChatHistoryEmailDemo() {
+  // ※ 프로토타입: 실제 메일 전송 없이 UI만 동작
   chatBody.querySelectorAll('.cs-card').forEach(el => {
     const r = el.closest('.msg-row');
     if (r) r.remove();
   });
-  await addBotMsg('대화 내역이 운영팀(help@miniintern.com)에 전송되었습니다!<br>담당자가 확인 후 연락드릴게요.');
+  await addBotMsg('대화 내역이 운영팀(example@miniintern.com)에 전송되었습니다!<br>담당자가 확인 후 연락드릴게요.');
   showPostAnswerChips();
 }
 
