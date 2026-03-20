@@ -720,6 +720,52 @@ body {
 }
 
 
+/* ===== Mobile Responsive (767px 이하) ===== */
+@media (max-width: 767px) {
+  .bg-guide { display: none; }
+
+  .phone.open {
+    width: 100%;
+    height: 92vh;
+    bottom: 0;
+    right: 0;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.15);
+    animation: chatOpenMobile 0.3s ease;
+  }
+
+  /* 배경 딤 */
+  .phone.open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: -1;
+  }
+
+  .fab {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .phone.open {
+    bottom: calc(88px + 20px);
+    right: 20px;
+    left: 20px;
+    width: auto;
+    height: calc(100vh - 88px - 40px);
+    border-radius: 24px;
+  }
+}
+
+@keyframes chatOpenMobile {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ===== Animations ===== */
 @keyframes msgIn {
   from { opacity: 0; transform: translateY(10px); }
