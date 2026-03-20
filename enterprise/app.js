@@ -746,6 +746,45 @@ async function sendMessage() {
     return;
   }
 
+  // 채팅 종료 트리거 (프로토타입 테스트용)
+  if (text === '채팅 종료') {
+    hideInput();
+    const sysRow = document.createElement('div');
+    sysRow.className = 'msg-system';
+    sysRow.textContent = '종료된 대화입니다';
+    chatBody.appendChild(sysRow);
+    scrollBottom();
+
+    if (resumedSessionId) {
+      const sessions = JSON.parse(localStorage.getItem('chatbot_sessions') || '[]');
+      const s = sessions.find(s => s.id === resumedSessionId);
+      if (s) {
+        s.expired = true;
+        s.messages = [...messageLog];
+        localStorage.setItem('chatbot_sessions', JSON.stringify(sessions));
+      }
+      resumedSessionId = null;
+    } else {
+      const sessions = JSON.parse(localStorage.getItem('chatbot_sessions') || '[]');
+      const firstUserMsg = messageLog.find(m => m.type === 'user');
+      const title = firstUserMsg ? firstUserMsg.text.replace(/<[^>]*>/g, '') : '새 대화';
+      const lastMsg = [...messageLog].reverse().find(m => m.type === 'bot' || m.type === 'user');
+      const preview = lastMsg ? lastMsg.text.replace(/<[^>]*>/g, '') : '';
+      const now = new Date();
+      sessions.unshift({
+        id: Date.now().toString(),
+        title, preview,
+        date: sessionDate || now.toLocaleDateString('ko-KR'),
+        time: sessionTime || now.toTimeString().slice(0, 8),
+        messages: [...messageLog],
+        expired: true
+      });
+      localStorage.setItem('chatbot_sessions', JSON.stringify(sessions));
+      messageLog = [];
+    }
+    return;
+  }
+
   // 로그인 토글 트리거 (프로토타입 테스트용)
   if (text === '로그인') {
     isLoggedIn = !isLoggedIn;
@@ -1030,9 +1069,19 @@ function resumeSession(id) {
     }
   }
 
+  const isExpired = session.expired === true;
+
   switchTab('chat');
   hideInput();
-  showPostAnswerChips();
+
+  if (isExpired) {
+    const sysRow = document.createElement('div');
+    sysRow.className = 'msg-system';
+    sysRow.textContent = '종료된 대화입니다';
+    chatBody.appendChild(sysRow);
+  } else {
+    showPostAnswerChips();
+  }
   scrollBottom();
 }
 
