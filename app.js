@@ -1256,5 +1256,30 @@ window.addEventListener('beforeunload', () => {
   }
 });
 
+// ===== Migrate old session date format =====
+(function migrateSessions() {
+  const sessions = JSON.parse(localStorage.getItem('chatbot_sessions') || '[]');
+  let changed = false;
+  sessions.forEach(s => {
+    // 기존 date + time 분리 포맷 → YYYY.MM.DD HH:MM 통합
+    if (s.time) {
+      const timePart = s.time.slice(0, 5); // "14:32:10" → "14:32"
+      // 기존 date: "2026. 3. 23." → "2026.03.23"
+      const dateParts = s.date.replace(/\.\s*/g, '.').replace(/\.$/, '').split('.');
+      if (dateParts.length >= 3) {
+        const y = dateParts[0];
+        const m = dateParts[1].padStart(2, '0');
+        const d = dateParts[2].padStart(2, '0');
+        s.date = `${y}.${m}.${d} ${timePart}`;
+      }
+      delete s.time;
+      changed = true;
+    }
+  });
+  if (changed) {
+    localStorage.setItem('chatbot_sessions', JSON.stringify(sessions));
+  }
+})();
+
 // ===== Start =====
 startWelcome();
