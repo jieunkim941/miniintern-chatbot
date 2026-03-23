@@ -40,7 +40,10 @@ function showInput() {
 }
 function handleInputChange(el) {
   if (el.value.length > MAX_INPUT_LENGTH) {
-    el.value = el.value.slice(0, MAX_INPUT_LENGTH);
+    const cursorPos = el.selectionStart;
+    const newChar = el.value.charAt(cursorPos - 1);
+    el.value = el.value.slice(0, MAX_INPUT_LENGTH - 1) + newChar;
+    el.selectionStart = el.selectionEnd = MAX_INPUT_LENGTH;
   }
   const len = el.value.length;
   const over = false;
@@ -353,10 +356,7 @@ async function renderAnswer(questionObj, showThinking = false) {
 function addBotMsgWithImage(text, imagePlaceholder, imageSrc, delay = 600, showThinking = false) {
   const imageContent = imageSrc
     ? `<div class="image-thumb" onclick="openImageViewer('${imageSrc}')"><img src="${imageSrc}" alt="${imagePlaceholder}"></div>`
-    : `<div class="image-placeholder">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2M8.5 13.5l2.5 3.01L14.5 12l4.5 6H5z"/></svg>
-        <span>${imagePlaceholder}</span>
-      </div>`;
+    : '';
   const bubbleHTML = `
     <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
     <div class="msg-bubble bot bubble-with-image">
@@ -456,6 +456,37 @@ function addCsCard() {
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83l3.75 3.75z"/></svg>
           문의 작성하기
         </button>
+      </div>
+    </div>`;
+  chatBody.appendChild(row);
+  scrollBottom();
+}
+
+function addEscalationCard() {
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+  row.innerHTML = `
+    <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+    <div class="cs-card">
+      <div class="cs-card-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"/></svg>
+        <span>운영팀 문의</span>
+      </div>
+      <div class="escalation-contacts">
+        <div class="escalation-row" onclick="copyText('help@miniintern.com', this)">
+          <span class="contact-label">이메일</span>
+          <span class="contact-value">help@miniintern.com</span>
+          <svg class="contact-copy" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"/></svg>
+        </div>
+        <div class="escalation-row" onclick="copyText('010-0000-0000', this)">
+          <span class="contact-label">연락처</span>
+          <span class="contact-value">010-0000-0000</span>
+          <svg class="contact-copy" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"/></svg>
+        </div>
+      </div>
+      <div class="cs-card-actions" style="margin-top:12px;">
+        <button class="cs-btn cs-btn-primary" onclick="sendChatHistoryEmailDemo()">대화 내역 전송하기</button>
+        <button class="cs-btn cs-btn-secondary" onclick="dismissEmailInquiry()">다음에 할게요</button>
       </div>
     </div>`;
   chatBody.appendChild(row);
@@ -903,9 +934,8 @@ async function sendMessage() {
 
   // 어려운 질문 트리거 — 대화 내역을 메일로 전송
   if (text === '어려운 질문') {
-    await addBotMsg('해당 질문은 AI가 바로 답변드리기 어려운 내용이에요.', 600, true);
-    await addBotMsg('지금까지의 대화 내용을 운영팀에 전달해드릴게요.<br>아래 버튼을 누르시면 대화 내역이 포함된 메일이 바로 전송됩니다.');
-    addChatHistoryEmailCard();
+    await addBotMsg('해당 질문은 AI가 바로 답변드리기 어려운 내용이에요.<br><br>운영팀에 직접 문의하시거나, 대화 내역을 전송해주시면 빠르게 도움드리겠습니다.', 600, true);
+    addEscalationCard();
     return;
   }
 
@@ -946,6 +976,11 @@ async function startWelcome() {
 }
 
 // ===== New Chat =====
+function newChatFromHistory() {
+  switchTab('chat');
+  newChat();
+}
+
 function newChat() {
   // 조회만 한 세션은 저장하지 않고, 그냥 넘어감
   if (!resumedSessionId) {
@@ -1027,9 +1062,11 @@ function exitChatSession() {
 // ===== Tab Switching =====
 function switchTab(tab) {
   currentTab = tab;
+  const newChatBtn = document.getElementById('newChatBtn');
   if (tab === 'chat') {
     chatBody.style.display = '';
     historyPanel.style.display = 'none';
+    if (newChatBtn) newChatBtn.style.display = 'none';
     if (inputBarWrap) inputBarWrap.style.display = '';
     if (inChatSession) {
       historyBtn.style.display = 'none';
@@ -1044,6 +1081,7 @@ function switchTab(tab) {
   } else {
     chatBody.style.display = 'none';
     historyPanel.style.display = '';
+    if (newChatBtn) newChatBtn.style.display = '';
     if (inputBarWrap) inputBarWrap.style.display = 'none';
     historyBtn.style.display = 'none';
     backBtn.style.display = 'flex';
@@ -1211,6 +1249,16 @@ document.addEventListener('click', () => {
 function toggleChat() {
   const phone = document.querySelector('.phone');
   const fab = document.getElementById('fabBtn');
+  const wasOpen = phone.classList.contains('open');
+
+  if (!wasOpen) {
+    const sessions = JSON.parse(localStorage.getItem('chatbot_sessions') || '[]');
+    const activeSession = sessions.find(s => !s.expired);
+    if (activeSession && !inChatSession && messageLog.length === 0) {
+      resumeSession(activeSession.id);
+    }
+  }
+
   const isOpen = phone.classList.toggle('open');
   fab.classList.toggle('active', isOpen);
 }

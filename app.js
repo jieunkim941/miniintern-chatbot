@@ -40,7 +40,10 @@ function showInput() {
 }
 function handleInputChange(el) {
   if (el.value.length > MAX_INPUT_LENGTH) {
-    el.value = el.value.slice(0, MAX_INPUT_LENGTH);
+    const cursorPos = el.selectionStart;
+    const newChar = el.value.charAt(cursorPos - 1);
+    el.value = el.value.slice(0, MAX_INPUT_LENGTH - 1) + newChar;
+    el.selectionStart = el.selectionEnd = MAX_INPUT_LENGTH;
   }
   const len = el.value.length;
   const over = false;
@@ -515,10 +518,7 @@ async function renderAnswer(questionObj, showThinking = false) {
 function addBotMsgWithImage(text, imagePlaceholder, imageSrc, delay = 600, showThinking = false) {
   const imageContent = imageSrc
     ? `<div class="image-thumb" onclick="openImageViewer('${imageSrc}')"><img src="${imageSrc}" alt="${imagePlaceholder}"></div>`
-    : `<div class="image-placeholder">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2M8.5 13.5l2.5 3.01L14.5 12l4.5 6H5z"/></svg>
-        <span>${imagePlaceholder}</span>
-      </div>`;
+    : '';
   const bubbleHTML = `
     <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
     <div class="msg-bubble bot bubble-with-image">
@@ -1058,6 +1058,11 @@ async function startWelcome() {
 }
 
 // ===== New Chat =====
+function newChatFromHistory() {
+  switchTab('chat');
+  newChat();
+}
+
 function newChat() {
   // 조회만 한 세션은 저장하지 않고, 그냥 넘어감
   if (!resumedSessionId) {
@@ -1139,9 +1144,11 @@ function exitChatSession() {
 // ===== Tab Switching =====
 function switchTab(tab) {
   currentTab = tab;
+  const newChatBtn = document.getElementById('newChatBtn');
   if (tab === 'chat') {
     chatBody.style.display = '';
     historyPanel.style.display = 'none';
+    if (newChatBtn) newChatBtn.style.display = 'none';
     if (inputBarWrap) inputBarWrap.style.display = '';
     if (inChatSession) {
       historyBtn.style.display = 'none';
@@ -1156,6 +1163,7 @@ function switchTab(tab) {
   } else {
     chatBody.style.display = 'none';
     historyPanel.style.display = '';
+    if (newChatBtn) newChatBtn.style.display = '';
     if (inputBarWrap) inputBarWrap.style.display = 'none';
     historyBtn.style.display = 'none';
     backBtn.style.display = 'flex';
@@ -1324,6 +1332,17 @@ document.addEventListener('click', () => {
 function toggleChat() {
   const phone = document.querySelector('.phone');
   const fab = document.getElementById('fabBtn');
+  const wasOpen = phone.classList.contains('open');
+
+  if (!wasOpen) {
+    // 열 때: 만료 안 된 최근 대화가 있으면 진입
+    const sessions = JSON.parse(localStorage.getItem('chatbot_sessions') || '[]');
+    const activeSession = sessions.find(s => !s.expired);
+    if (activeSession && !inChatSession && messageLog.length === 0) {
+      resumeSession(activeSession.id);
+    }
+  }
+
   const isOpen = phone.classList.toggle('open');
   fab.classList.toggle('active', isOpen);
 }

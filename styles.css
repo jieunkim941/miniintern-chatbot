@@ -161,13 +161,38 @@ body {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
+  padding-bottom: 72px;
   background: var(--gray-200);
   display: flex;
   flex-direction: column;
   gap: 10px;
+  position: relative;
 }
 .history-panel::-webkit-scrollbar { width: 4px; }
 .history-panel::-webkit-scrollbar-thumb { background: var(--gray-400); border-radius: 2px; }
+
+.new-chat-btn {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 24px;
+  border-radius: 100px;
+  border: none;
+  background: var(--blue-500);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.15s;
+  z-index: 10;
+}
+.new-chat-btn:hover {
+  background: #0d8de6;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
 
 .history-empty {
   flex: 1;
