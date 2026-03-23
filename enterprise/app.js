@@ -18,14 +18,52 @@ let freeInputCount = 0;
 const FREE_INPUT_LIMIT = 5;
 
 // ===== Input bar show/hide =====
+const inputBarWrap = document.querySelector('.input-bar-wrap');
+const inputError = document.getElementById('inputError');
+const inputContainer = document.getElementById('inputContainer');
+const MAX_INPUT_LENGTH = 300;
+
 function hideInput() {
-  inputBar.style.display = 'none';
+  if (inputBarWrap) inputBarWrap.style.display = 'none';
 }
 function showInput() {
-  inputBar.style.display = '';
+  if (inputBarWrap) inputBarWrap.style.display = '';
   inputField.disabled = false;
-  inputField.placeholder = '메시지를 입력하세요...';
+  inputField.value = '';
+  inputField.style.height = 'auto';
+  if (inputError) inputError.style.display = 'none';
+  if (inputContainer) inputContainer.classList.remove('error');
+  const counter = document.getElementById('inputCounter');
+  if (counter) { counter.textContent = `0 / ${MAX_INPUT_LENGTH}`; counter.classList.remove('error'); }
+  const sendBtn = document.getElementById('sendBtn');
+  if (sendBtn) sendBtn.classList.remove('active');
   inputField.focus();
+}
+function handleInputChange(el) {
+  const len = el.value.length;
+  const over = len > MAX_INPUT_LENGTH;
+  const hasText = el.value.trim().length > 0;
+  const counter = document.getElementById('inputCounter');
+  const sendBtn = document.getElementById('sendBtn');
+
+  if (inputError) inputError.style.display = over ? 'flex' : 'none';
+  if (inputContainer) inputContainer.classList.toggle('error', over);
+  if (counter) {
+    counter.textContent = `${len} / ${MAX_INPUT_LENGTH}`;
+    counter.classList.toggle('error', over);
+  }
+  if (sendBtn) {
+    sendBtn.disabled = !hasText || over;
+    sendBtn.classList.toggle('active', hasText && !over);
+  }
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 98) + 'px';
+}
+function handleInputKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+    e.preventDefault();
+    sendMessage();
+  }
 }
 
 // =============================================================
@@ -752,7 +790,12 @@ async function sendMessage() {
   const text = inputField.value.trim();
   if (!text) return;
   inputField.value = '';
-  document.getElementById('sendBtn').disabled = true;
+  inputField.style.height = 'auto';
+  const sendBtn = document.getElementById('sendBtn');
+  sendBtn.disabled = true;
+  sendBtn.classList.remove('active');
+  const counter = document.getElementById('inputCounter');
+  if (counter) { counter.textContent = `0 / ${MAX_INPUT_LENGTH}`; counter.classList.remove('error'); }
   chatBody.querySelectorAll('.quick-replies').forEach(el => el.remove());
 
   // 조회 중인 세션에 새 메시지 → 스토리지에서 기존 세션 제거 (새 시간으로 업데이트)
@@ -961,7 +1004,7 @@ function switchTab(tab) {
   if (tab === 'chat') {
     chatBody.style.display = '';
     historyPanel.style.display = 'none';
-    inputBar.style.display = '';
+    if (inputBarWrap) inputBarWrap.style.display = '';
     if (inChatSession) {
       historyBtn.style.display = 'none';
       backBtn.style.display = 'flex';
@@ -975,7 +1018,7 @@ function switchTab(tab) {
   } else {
     chatBody.style.display = 'none';
     historyPanel.style.display = '';
-    inputBar.style.display = 'none';
+    if (inputBarWrap) inputBarWrap.style.display = 'none';
     historyBtn.style.display = 'none';
     backBtn.style.display = 'flex';
     backBtn.onclick = () => switchTab('chat');
