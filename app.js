@@ -12,7 +12,6 @@ let currentTab = 'chat';
 let csInquiryMode = false;
 let navState = { userType: null, category: null };
 let sessionDate = null;  // 세션 최초 생성 시간 보존
-let sessionTime = null;
 let isLoggedIn = false;
 let pendingLoginQuestion = null;  // 로그인 후 답변할 질문 저장
 let freeInputCount = 0;  // 자유 입력 횟수 (일일 최대 5회)
@@ -302,6 +301,15 @@ const FAQ_TREE = {
 };
 
 // ===== Scroll to bottom =====
+function formatDateTime(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  const h = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  return `${y}.${m}.${d} ${h}:${min}`;
+}
+
 function scrollBottom() {
   setTimeout(() => { chatBody.scrollTop = chatBody.scrollHeight; }, 50);
 }
@@ -862,8 +870,7 @@ async function sendMessage() {
     localStorage.setItem('chatbot_sessions', JSON.stringify(filtered));
     resumedSessionId = null;
     sessionDate = null;
-    sessionTime = null;
-  }
+      }
 
   addUserMsg(text);
 
@@ -907,8 +914,7 @@ async function sendMessage() {
       sessions.unshift({
         id: Date.now().toString(),
         title, preview,
-        date: sessionDate || now.toLocaleDateString('ko-KR'),
-        time: sessionTime || now.toTimeString().slice(0, 8),
+        date: sessionDate || formatDateTime(now),
         messages: [...messageLog],
         expired: true
       });
@@ -1004,16 +1010,14 @@ function saveSession() {
     id: Date.now().toString(),
     title,
     preview,
-    date: sessionDate || now.toLocaleDateString('ko-KR'),
-    time: sessionTime || now.toTimeString().slice(0, 8),
+    date: sessionDate || formatDateTime(now),
     messages: [...messageLog]
   });
 
   localStorage.setItem('chatbot_sessions', JSON.stringify(sessions));
   messageLog = [];
   sessionDate = null;
-  sessionTime = null;
-}
+  }
 
 // ===== Chat Session Depth (롤백 시 이 블록 제거) =====
 let inChatSession = false;
@@ -1094,8 +1098,7 @@ function getCurrentSession() {
     id: '_current',
     title,
     preview,
-    date: sessionDate || now.toLocaleDateString('ko-KR'),
-    time: sessionTime || now.toTimeString().slice(0, 8),
+    date: sessionDate || formatDateTime(now),
   };
 }
 
@@ -1118,7 +1121,7 @@ function renderHistoryList() {
         <div class="history-item-content">
           <div class="history-item-title">${s.title}</div>
           <div class="history-item-preview">${s.preview}</div>
-          <div class="history-item-date">${s.date}${s.time ? ' ' + s.time : ''}</div>
+          <div class="history-item-date">${s.date}</div>
         </div>
         <button class="history-more-btn" onclick="event.stopPropagation(); toggleSessionMenu('${s.id}')">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg>
@@ -1150,7 +1153,6 @@ function resumeSession(id) {
   resumedSessionId = id;
   messageLog = [...session.messages];
   sessionDate = session.date;
-  sessionTime = session.time;
 
   chatBody.innerHTML = '';
   session.messages.forEach(msg => {
