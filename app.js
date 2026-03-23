@@ -38,15 +38,20 @@ function showInput() {
   if (sendBtn) sendBtn.classList.remove('active');
   inputField.focus();
 }
+let inputOverLimit = false;
+
 function handleInputChange(el) {
   if (el.value.length > MAX_INPUT_LENGTH) {
     const cursorPos = el.selectionStart;
     const newChar = el.value.charAt(cursorPos - 1);
     el.value = el.value.slice(0, MAX_INPUT_LENGTH - 1) + newChar;
     el.selectionStart = el.selectionEnd = MAX_INPUT_LENGTH;
+    inputOverLimit = true;
+  } else if (el.value.length < MAX_INPUT_LENGTH) {
+    inputOverLimit = false;
   }
   const len = el.value.length;
-  const over = false;
+  const over = inputOverLimit;
   const hasText = el.value.trim().length > 0;
   const counter = document.getElementById('inputCounter');
   const sendBtn = document.getElementById('sendBtn');
@@ -759,17 +764,21 @@ async function handleCategorySelect(category) {
       showPostAnswerChips();
       return;
     }
-    enterChatSession('직접 입력');
-    chatBody.innerHTML = '';
-    messageLog = [];
+    if (!inChatSession) {
+      enterChatSession('직접 입력');
+      chatBody.innerHTML = '';
+      messageLog = [];
+    }
     await addBotMsg('궁금한 내용을 직접 입력해주세요!');
     showInput();
     return;
   }
 
-  enterChatSession(category);
-  chatBody.innerHTML = '';
-  messageLog = [];
+  if (!inChatSession) {
+    enterChatSession(category);
+    chatBody.innerHTML = '';
+    messageLog = [];
+  }
 
   // 카테고리가 현재 유저 타입에 없으면 전체에서 찾기
   let userType = navState.userType;

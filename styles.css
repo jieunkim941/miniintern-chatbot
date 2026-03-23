@@ -758,7 +758,7 @@ body {
   outline: none;
   resize: none;
   min-height: 20px;
-  max-height: 98px;
+  max-height: 98px !important;
   overflow-y: auto;
   line-height: 20px;
   color: #2E3138;

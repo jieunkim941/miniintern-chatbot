@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기업회원 챗봇 — Component Showcase</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="styles.css">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  /* === Showcase overrides === */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  body {
+    background: #E8EAED;
+    padding: 40px;
+  }
+  .bg-guide { display: none; }
+
+  /* Force phone visible and static */
+  .phone {
+    display: flex !important;
+    position: static !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+  }
+  .msg-row, .quick-replies, .msg-system { animation: none !important; }
+
+  /* Showcase layout */
+  .showcase {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+  .showcase-title {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: #1A1B1C;
+    margin-bottom: 4px;
+  }
+  .showcase-subtitle {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 14px;
+    color: #6B6F76;
+    margin-bottom: 32px;
+  }
+  .showcase-divider {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: #1A1B1C;
+    padding: 24px 0 0;
+    border-top: 4px solid #1535B3;
+  }
+
+  /* Section */
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .section-title {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A1B1C;
+    border-bottom: 2px solid #D2D4D7;
+    padding-bottom: 8px;
+  }
+  .section-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  /* Component wrapper */
+  .comp {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .class-label {
+    font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+    font-size: 11px;
+    background: #41454D;
+    color: #FFFFFF;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    width: fit-content;
+    line-height: 1.6;
+  }
+  .comp-render {
+    background: #F2F3F5;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+  }
+  .comp-render--white {
+    background: #FFFFFF;
+    border: 1px solid #E1E3E6;
+  }
+
+  /* State label */
+  .state-label {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 11px;
+    color: #94999E;
+    text-align: center;
+    margin-top: 6px;
+  }
+  .state-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Force hover/active states statically */
+  .force-hover-fab { box-shadow: 0 6px 24px rgba(0,0,0,0.2) !important; transform: scale(1.05) !important; }
+  .force-hover-chip { background: var(--rc-blue-500) !important; color: var(--white) !important; }
+  .force-hover-cs-primary { background: var(--rc-blue-600) !important; }
+  .force-hover-cs-secondary { background: var(--gray-300) !important; }
+  .force-hover-back { background: var(--gray-400) !important; }
+  .force-hover-history { background: var(--gray-200) !important; }
+  .force-hover-contact { background: var(--gray-200) !important; }
+  .force-hover-input { border-color: var(--rc-blue-500) !important; }
+  .force-hover-send { background: var(--rc-blue-600) !important; }
+  .force-disabled-send { background: var(--gray-400) !important; cursor: default !important; }
+  .force-copied { color: var(--green-500) !important; }
+
+  /* Inline flex helpers */
+  .inline-row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  /* Full-screen cases grid */
+  .cases-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    align-items: flex-start;
+  }
+  .case-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .case-title {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #41454D;
+  }
+  .case-desc {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 11px;
+    color: #94999E;
+    margin-bottom: 4px;
+  }
+
+  /* Login prompt bubble */
+  .login-prompt-bubble {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .login-prompt-bubble .login-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    background: var(--rc-blue-500);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="showcase">
+
+  <div>
+    <div class="showcase-title">기업회원 챗봇 UI Components</div>
+    <div class="showcase-subtitle">RC Blue Theme (#1535B3) — CSS Class Reference for Developer Handoff</div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PART 1: COMPONENT SHOWCASE                                    -->
+  <!-- ============================================================ -->
+
+  <!-- 1. FAB Button -->
+  <div class="section">
+    <div class="section-title">1. FAB Button</div>
+    <div class="section-body">
+      <div class="state-group">
+        <span class="class-label">.fab</span>
+        <button class="fab" style="position:static;"><svg class="fab-icon fab-open" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 14H5.17L4 17.17V4h16z"/></svg></button>
+        <span class="state-label">default</span>
+      </div>
+      <div class="state-group">
+        <span class="class-label">.fab:hover</span>
+        <button class="fab force-hover-fab" style="position:static;"><svg class="fab-icon fab-open" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m0 14H5.17L4 17.17V4h16z"/></svg></button>
+        <span class="state-label">hover</span>
+      </div>
+      <div class="state-group">
+        <span class="class-label">.fab.active</span>
+        <button class="fab active" style="position:static;"><svg class="fab-icon fab-close" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"/></svg></button>
+        <span class="state-label">active (X icon)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Header -->
+  <div class="section">
+    <div class="section-title">2. Header</div>
+    <div class="section-body">
+      <div class="comp" style="width:390px;">
+        <span class="class-label">.header &gt; .avatar + .header-name + .history-btn (Main)</span>
+        <div class="comp-render--white" style="border-radius:12px;overflow:hidden;">
+          <div class="header">
+            <div class="avatar">
+              <img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;">
+            </div>
+            <div class="header-name">미니인턴 기업회원 AI 챗봇</div>
+            <button class="history-btn" title="대화 내역">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="comp" style="width:390px;">
+        <span class="class-label">.header &gt; .back-btn + .avatar + .header-name (Chat Session)</span>
+        <div class="comp-render--white" style="border-radius:12px;overflow:hidden;">
+          <div class="header">
+            <button class="back-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/>
+              </svg>
+            </button>
+            <div class="avatar">
+              <img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;">
+            </div>
+            <div class="header-name">채용/인재 관리</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Bot Message -->
+  <div class="section">
+    <div class="section-title">3. Bot Message</div>
+    <div class="section-body">
+      <div class="comp">
+        <span class="class-label">.msg-row &gt; .msg-avatar + .msg-bubble.bot</span>
+        <div class="comp-render">
+          <div class="msg-row">
+            <div class="msg-avatar">
+              <img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;">
+            </div>
+            <div class="msg-bubble bot">안녕하세요! 미니인턴 기업회원 AI 챗봇입니다. 채용과 인재 관리에 대해 무엇이든 물어보세요.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. User Message -->
+  <div class="section">
+    <div class="section-title">4. User Message</div>
+    <div class="section-body">
+      <div class="comp">
+        <span class="class-label">.msg-row.user &gt; .msg-bubble.user</span>
+        <div class="comp-render">
+          <div class="msg-row user">
+            <div class="msg-bubble user">인턴 채용 공고를 등록하고 싶어요</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Image-included Bubble -->
+  <div class="section">
+    <div class="section-title">5. Image-included Bubble</div>
+    <div class="section-body">
+      <div class="comp">
+        <span class="class-label">.msg-bubble.bot.bubble-with-image &gt; .bubble-text + .image-thumb</span>
+        <div class="comp-render">
+          <div class="msg-row">
+            <div class="msg-avatar">
+              <img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;">
+            </div>
+            <div class="msg-bubble bot bubble-with-image">
+              <div class="bubble-text">채용 공고 등록 절차를 안내해 드릴게요.</div>
+              <div class="image-thumb">
+                <img src="./images/sample-guide.jpg" alt="가이드 이미지">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Quick Replies / Chips -->
+  <div class="section">
+    <div class="section-title">6. Quick Replies / Chips</div>
+    <div class="section-body">
+      <div class="comp" style="width:360px;">
+        <span class="class-label">.quick-replies &gt; .chip</span>
+        <div class="comp-render">
+          <div class="quick-replies">
+            <button class="chip">채용 공고 등록</button>
+            <button class="chip">지원자 관리</button>
+            <button class="chip">면접 일정 조율</button>
+            <button class="chip">계약서 작성</button>
+          </div>
+        </div>
+      </div>
+      <div class="comp" style="width:360px;">
+        <span class="class-label">.chip:hover (rc-blue fill)</span>
+        <div class="comp-render">
+          <div class="quick-replies">
+            <button class="chip force-hover-chip">채용 공고 등록</button>
+            <button class="chip">지원자 관리</button>
+            <button class="chip">면접 일정 조율</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Thinking Indicator -->
+  <div class="section">
+    <div class="section-title">7. Thinking Indicator</div>
+    <div class="section-body">
+      <div class="comp">
+        <span class="class-label">.thinking-indicator &gt; .thinking-step</span>
+        <div class="comp-render" style="display:flex; gap:24px; flex-wrap:wrap;">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <span class="class-label">.thinking-step.active</span>
+            <div class="msg-row">
+              <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+              <div class="thinking-indicator">
+                <div class="thinking-step active">
+                  <span class="step-text">답변 생각 중</span>
+                  <div class="thinking-dots"><div class="thinking-dot" style="opacity:0.4;"></div><div class="thinking-dot" style="opacity:0.7;"></div><div class="thinking-dot" style="opacity:1;"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <span class="class-label">.thinking-step.active</span>
+            <div class="msg-row">
+              <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+              <div class="thinking-indicator">
+                <div class="thinking-step active">
+                  <span class="step-text">추론 중</span>
+                  <div class="thinking-dots"><div class="thinking-dot" style="opacity:0.4;"></div><div class="thinking-dot" style="opacity:0.7;"></div><div class="thinking-dot" style="opacity:1;"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <span class="class-label">.thinking-step.active</span>
+            <div class="msg-row">
+              <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+              <div class="thinking-indicator">
+                <div class="thinking-step active">
+                  <span class="step-text">답변 검토 중</span>
+                  <div class="thinking-dots"><div class="thinking-dot" style="opacity:0.4;"></div><div class="thinking-dot" style="opacity:0.7;"></div><div class="thinking-dot" style="opacity:1;"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <span class="class-label">.thinking-step.done</span>
+            <div class="msg-row">
+              <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+              <div class="thinking-indicator">
+                <div class="thinking-step done">
+                  <span class="step-text">답변 검토 완료</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Loading Dots Bubble -->
+  <div class="section">
+    <div class="section-title">8. Loading Dots Bubble</div>
+    <div class="section-body">
+      <div class="comp">
+        <span class="class-label">.msg-bubble.bot.loading-bubble &gt; .thinking-dots</span>
+        <div class="comp-render">
+          <div class="msg-row">
+            <div class="msg-avatar">
+              <img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;">
+            </div>
+            <div class="msg-bubble bot loading-bubble">
+              <div class="thinking-dots">
+                <span class="thinking-dot" style="opacity:0.4;"></span>
+                <span class="thinking-dot" style="opacity:0.7;"></span>
+                <span class="thinking-dot" style="opacity:1;"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. CS Card -->
+  <div class="section">
+    <div class="section-title">9. CS Card</div>
+    <div class="section-body">
+      <div class="comp">
+        <span class="class-label">.cs-card &gt; .cs-card-header + .cs-card-desc + .cs-card-actions</span>
+        <div class="comp-render">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="cs-card">
+              <div class="cs-card-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-7 12h-2v-2h2zm0-4h-2V6h2z"/></svg>
+                고객센터 안내
+              </div>
+              <div class="cs-card-desc">기업회원 전용 상담이 필요하시면 고객센터로 문의해 주세요. 평일 09:00 ~ 18:00 운영됩니다.</div>
+              <div class="cs-card-actions">
+                <button class="cs-btn cs-btn-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"/></svg>
+                  1:1 채팅 상담
+                </button>
+                <button class="cs-btn cs-btn-secondary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24c1.12.37 2.33.57 3.57.57c.55 0 1 .45 1 1V20c0 .55-.45 1-1 1c-9.39 0-17-7.61-17-17c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1c0 1.25.2 2.45.57 3.57c.11.35.03.74-.25 1.02z"/></svg>
+                  전화 문의
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Button states -->
+      <div class="comp">
+        <span class="class-label">Button States</span>
+        <div class="comp-render" style="display:flex;gap:16px;flex-wrap:wrap;">
+          <div class="state-group">
+            <button class="cs-btn cs-btn-primary">Primary</button>
+            <span class="state-label">default</span>
+          </div>
+          <div class="state-group">
+            <button class="cs-btn cs-btn-primary force-hover-cs-primary">Primary</button>
+            <span class="state-label">hover</span>
+          </div>
+          <div class="state-group">
+            <button class="cs-btn cs-btn-secondary">Secondary</button>
+            <span class="state-label">default</span>
+          </div>
+          <div class="state-group">
+            <button class="cs-btn cs-btn-secondary force-hover-cs-secondary">Secondary</button>
+            <span class="state-label">hover</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Contact Card -->
+  <div class="section">
+    <div class="section-title">10. Contact Card</div>
+    <div class="section-body">
+      <div class="comp">
+        <span class="class-label">.contact-card &gt; .contact-card-header + .contact-card-list &gt; .contact-row</span>
+        <div class="comp-render">
+          <div class="inline-row">
+            <!-- Default -->
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <span class="class-label">default</span>
+              <div class="msg-row">
+                <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+                <div class="contact-card">
+                  <div class="contact-card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24c1.12.37 2.33.57 3.57.57c.55 0 1 .45 1 1V20c0 .55-.45 1-1 1c-9.39 0-17-7.61-17-17c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1c0 1.25.2 2.45.57 3.57c.11.35.03.74-.25 1.02z"/></svg>
+                    미니인턴 연락처
+                  </div>
+                  <div class="contact-card-list">
+                    <div class="contact-row">
+                      <span class="contact-label">이메일</span>
+                      <span class="contact-value">biz@miniintern.com</span>
+                      <span class="contact-copy"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"/></svg></span>
+                    </div>
+                    <div class="contact-row">
+                      <span class="contact-label">전화</span>
+                      <span class="contact-value">02-1234-5678</span>
+                      <span class="contact-copy"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"/></svg></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Copied state -->
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <span class="class-label">.contact-value.copied</span>
+              <div class="msg-row">
+                <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+                <div class="contact-card">
+                  <div class="contact-card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24c1.12.37 2.33.57 3.57.57c.55 0 1 .45 1 1V20c0 .55-.45 1-1 1c-9.39 0-17-7.61-17-17c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1c0 1.25.2 2.45.57 3.57c.11.35.03.74-.25 1.02z"/></svg>
+                    미니인턴 연락처
+                  </div>
+                  <div class="contact-card-list">
+                    <div class="contact-row force-hover-contact">
+                      <span class="contact-label">이메일</span>
+                      <span class="contact-value force-copied">복사 완료!</span>
+                      <span class="contact-copy"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19L21 7l-1.41-1.41z"/></svg></span>
+                    </div>
+                    <div class="contact-row">
+                      <span class="contact-label">전화</span>
+                      <span class="contact-value">02-1234-5678</span>
+                      <span class="contact-copy"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2m0 16H8V7h11z"/></svg></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. Text Input -->
+  <div class="section">
+    <div class="section-title">11. Text Input</div>
+    <div class="section-body">
+      <!-- Default -->
+      <div class="comp" style="width:390px;">
+        <span class="class-label">.input-container (default)</span>
+        <div class="comp-render--white" style="border-radius:12px;overflow:hidden;padding:12px;">
+          <div class="input-container">
+            <textarea class="input-field" rows="1" placeholder="메시지를 입력해 주세요." readonly style="pointer-events:none;"></textarea>
+            <div class="input-bottom">
+              <span class="input-counter">0 / 300</span>
+              <button class="send-btn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+              </button>
+            </div>
+          </div>
+          <span class="state-label">default — placeholder visible</span>
+        </div>
+      </div>
+      <!-- Focused -->
+      <div class="comp" style="width:390px;">
+        <span class="class-label">.input-container.focused</span>
+        <div class="comp-render--white" style="border-radius:12px;overflow:hidden;padding:12px;">
+          <div class="input-container focused">
+            <textarea class="input-field" rows="1" readonly style="pointer-events:none;"></textarea>
+            <div class="input-bottom">
+              <span class="input-counter">0 / 300</span>
+              <button class="send-btn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+              </button>
+            </div>
+          </div>
+          <span class="state-label">focused — rc-blue border, placeholder hidden</span>
+        </div>
+      </div>
+      <!-- Typing -->
+      <div class="comp" style="width:390px;">
+        <span class="class-label">.input-container.focused + .send-btn.active</span>
+        <div class="comp-render--white" style="border-radius:12px;overflow:hidden;padding:12px;">
+          <div class="input-container focused">
+            <textarea class="input-field" rows="1" readonly style="pointer-events:none;">채용 공고 등록 방법이 궁금합니다</textarea>
+            <div class="input-bottom">
+              <span class="input-counter">17 / 300</span>
+              <button class="send-btn active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+              </button>
+            </div>
+          </div>
+          <span class="state-label">typing — text + counter + active send</span>
+        </div>
+      </div>
+      <!-- Error -->
+      <div class="comp" style="width:390px;">
+        <span class="class-label">.input-container.error + .input-counter.error + .input-error-msg</span>
+        <div class="comp-render--white" style="border-radius:12px;overflow:hidden;padding:12px;">
+          <div class="input-container error">
+            <textarea class="input-field" rows="2" readonly style="pointer-events:none;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate.</textarea>
+            <div class="input-bottom">
+              <span class="input-counter error">305 / 300</span>
+              <button class="send-btn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="input-error-msg" style="display:flex;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.99989 13.3523C8.96154 13.3523 9.85819 13.1065 10.6915 12.6148C11.4921 12.1563 12.156 11.4927 12.6148 10.6923C13.1065 9.85903 13.3523 8.96154 13.3523 7.99989C13.3523 7.03824 13.1065 6.14159 12.6148 5.30827C12.1563 4.5077 11.4927 3.84381 10.6923 3.38497C9.85903 2.89332 8.96154 2.64749 7.99989 2.64749C7.03824 2.64749 6.14159 2.89332 5.30827 3.38497C4.5077 3.84346 3.84381 4.50707 3.38497 5.30744C2.89332 6.14076 2.64749 7.03824 2.64749 7.99989C2.64749 8.96154 2.89332 9.85819 3.38497 10.6915C3.84346 11.4921 4.50707 12.156 5.30744 12.6148C6.14076 13.1065 7.03824 13.3523 7.99989 13.3523ZM7.99989 1.33334C9.21821 1.33334 10.3449 1.63751 11.3815 2.24666C12.3713 2.80911 13.1907 3.62852 13.7531 4.61829C14.3586 5.6418 14.6743 6.81072 14.6664 7.99989C14.6743 9.18906 14.3586 10.358 13.7531 11.3815C13.1907 12.3713 12.3713 13.1907 11.3815 13.7531C10.358 14.3586 9.18906 14.6743 7.99989 14.6664C6.81072 14.6743 5.6418 14.3586 4.61829 13.7531C3.62996 13.1814 2.81144 12.3571 2.24666 11.3648C1.64274 10.3468 1.32704 9.18361 1.33334 7.99989C1.33334 6.79242 1.63751 5.67077 2.24666 4.63495C2.82068 3.64407 3.64407 2.82068 4.63495 2.24666C5.65304 1.64274 6.81618 1.32704 7.99989 1.33334ZM7.34324 4.64995H8.65655V8.65655H7.34324V4.64995ZM7.34324 10.0032H8.65655V11.349H7.34324V10.0032Z" fill="#FF0322"/></svg>
+            300자 이하로 작성해주세요.
+          </div>
+          <span class="state-label">error — red counter + error message</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12. History Item -->
+  <div class="section">
+    <div class="section-title">12. History Item</div>
+    <div class="section-body">
+      <div class="comp" style="width:358px;">
+        <span class="class-label">.history-item &gt; .history-item-content + .history-more-btn</span>
+        <div class="comp-render" style="display:flex;flex-direction:column;gap:10px;">
+          <div class="history-item">
+            <div class="history-item-content">
+              <div class="history-item-title">채용 공고 등록 문의</div>
+              <div class="history-item-preview">마케팅 인턴 채용 공고를 등록하고 싶은데...</div>
+              <div class="history-item-date">2026.03.22 14:30</div>
+            </div>
+            <button class="history-more-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg></button>
+          </div>
+          <div class="history-item">
+            <div class="history-item-content">
+              <div class="history-item-title">지원자 현황 확인</div>
+              <div class="history-item-preview">현재 지원자 수와 면접 일정을 확인하고...</div>
+              <div class="history-item-date">2026.03.21 10:15</div>
+            </div>
+            <button class="history-more-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div class="comp" style="width:358px;">
+        <span class="class-label">.history-menu.open (더보기 클릭 시)</span>
+        <div class="comp-render" style="display:flex;flex-direction:column;gap:10px;">
+          <div class="history-item" style="position:relative;">
+            <div class="history-item-content">
+              <div class="history-item-title">채용 공고 등록 문의</div>
+              <div class="history-item-preview">마케팅 인턴 채용 공고를 등록하고 싶은데...</div>
+              <div class="history-item-date">2026.03.22 14:30</div>
+            </div>
+            <button class="history-more-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2s-2 .9-2 2s.9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2"/></svg></button>
+            <div class="history-menu open" style="display:block;">
+              <button>삭제</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12-1. Image Viewer (이미지 전체보기) -->
+  <div class="section">
+    <div class="section-title">12-1. Image Viewer (이미지 클릭 시 전체보기)</div>
+    <div class="section-body">
+      <div class="comp">
+        <span class="class-label">.image-viewer &gt; .image-viewer-backdrop + .image-viewer-content &gt; img + .image-viewer-close</span>
+        <div class="comp-render" style="position:relative; height:400px; overflow:hidden; border-radius:12px;">
+          <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);"></div>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-width:80%;max-height:80%;">
+            <img src="./images/sample-guide.jpg" alt="이미지 전체보기" style="max-width:100%;max-height:320px;border-radius:8px;display:block;">
+            <button style="position:absolute;top:-36px;right:0;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13. New Chat Button -->
+  <div class="section">
+    <div class="section-title">13. New Chat Button</div>
+    <div class="section-body">
+      <div class="state-group">
+        <span class="class-label">.new-chat-btn</span>
+        <button class="new-chat-btn" style="position:static;transform:none;">+ 새 대화</button>
+        <span class="state-label">default</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 14. Login Prompt -->
+  <div class="section">
+    <div class="section-title">14. Login Prompt</div>
+    <div class="section-body">
+      <div class="comp">
+        <span class="class-label">.msg-bubble.bot.login-prompt-bubble</span>
+        <div class="comp-render">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot login-prompt-bubble">
+              <span>이 기능은 로그인 후 이용하실 수 있습니다.</span>
+              <button class="login-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4s-4 1.79-4 4s1.79 4 4 4m0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4"/></svg>
+                로그인하기
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 15. System Message -->
+  <div class="section">
+    <div class="section-title">15. System Message</div>
+    <div class="section-body">
+      <div class="comp" style="width:358px;">
+        <span class="class-label">.msg-system</span>
+        <div class="comp-render">
+          <div class="msg-system">종료된 대화입니다</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PART 2: FULL SCREEN CASES                                     -->
+  <!-- ============================================================ -->
+
+  <div class="showcase-divider">Full Screen Cases</div>
+
+  <div class="cases-grid">
+
+    <!-- Case 1. 웰컴 화면 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 1. 웰컴 화면</div>
+      <div class="case-desc">SPEC 2, 6 — Header(main) + welcome + category chips + 직접 입력</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">미니인턴 기업회원 AI 챗봇</div>
+          <button class="history-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 2v9h-3.56c-.36 0-.68.19-.86.5c-.52.9-1.47 1.5-2.58 1.5s-2.06-.6-2.58-1.5a1 1 0 0 0-.86-.5H5V5z"/></svg></button>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">안녕하세요! 미니인턴 기업회원 AI 챗봇입니다. 아래에서 궁금한 주제를 선택해 주세요.</div>
+          </div>
+          <div class="quick-replies">
+            <button class="chip">채용 공고 등록</button>
+            <button class="chip">지원자 관리</button>
+            <button class="chip">면접/계약</button>
+            <button class="chip">결제/정산</button>
+            <button class="chip">직접 입력</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 2. 카테고리 선택 → 질문 목록 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 2. 카테고리 선택 → 질문 목록</div>
+      <div class="case-desc">SPEC 6 — Header(back) + category message + question chips</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">채용 공고 등록</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">채용 공고 등록에 대해 궁금한 점을 선택해 주세요.</div>
+          </div>
+          <div class="quick-replies">
+            <button class="chip">공고 등록 방법이 궁금해요</button>
+            <button class="chip">등록 비용이 있나요?</button>
+            <button class="chip">공고 수정은 어떻게 하나요?</button>
+            <button class="chip">공고 노출 기간은 얼마인가요?</button>
+            <button class="chip">다른게 궁금해요</button>
+            <button class="chip">직접 입력</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 3. 봇 답변 + 후속 칩 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 3. 봇 답변 (키워드 선택형) + 후속 칩</div>
+      <div class="case-desc">SPEC 6 — User question + bot answer + follow-up chips</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">채용 공고 등록</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row user">
+            <div class="msg-bubble user">공고 등록 방법이 궁금해요</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">기업 회원 가입 후 '채용 공고 등록' 메뉴에서 직접 등록하실 수 있습니다. 공고 제목, 직무 설명, 근무 조건 등을 입력해 주세요.</div>
+          </div>
+          <div class="quick-replies">
+            <button class="chip">등록 비용이 있나요?</button>
+            <button class="chip">공고 수정은 어떻게 하나요?</button>
+            <button class="chip">다른게 궁금해요</button>
+            <button class="chip">직접 입력</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 4. 이미지 포함형 답변 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 4. 이미지 포함형 답변</div>
+      <div class="case-desc">SPEC 8 — User question + bot answer with image</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">채용 공고 등록</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row user">
+            <div class="msg-bubble user">공고 등록 화면을 보여주세요</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot bubble-with-image">
+              <div class="bubble-text">아래 이미지를 참고해 주세요. 공고 등록 절차를 확인하실 수 있습니다.</div>
+              <div class="image-thumb">
+                <img src="./images/sample-guide.jpg" alt="가이드 이미지">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 5. 연락처 연결형 답변 (Escalation Card) -->
+    <div class="case-wrap">
+      <div class="case-title">Case 5. Escalation Card (기업회원 전용)</div>
+      <div class="case-desc">SPEC 9, 11 — answer + escalation card (contacts + send history + 다음에 할게요)</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">미니인턴 기업회원 AI 챗봇</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row user">
+            <div class="msg-bubble user">계약 관련 복잡한 문의가 있어요</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">이 문의는 담당자의 직접 확인이 필요합니다. 아래 연락처로 문의하시거나, 대화 내역을 메일로 보내드릴 수 있습니다.</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar" style="visibility:hidden;"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="cs-card">
+              <div class="cs-card-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-7 12h-2v-2h2zm0-4h-2V6h2z"/></svg>
+                담당자 연결 안내
+              </div>
+              <div class="escalation-contacts">
+                <div class="escalation-row">
+                  <span class="contact-label">이메일</span>
+                  <span class="contact-value">biz@miniintern.com</span>
+                </div>
+                <div class="escalation-row">
+                  <span class="contact-label">전화</span>
+                  <span class="contact-value">02-1234-5678</span>
+                </div>
+              </div>
+              <div class="cs-card-actions" style="margin-top:12px;">
+                <button class="cs-btn cs-btn-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z"/></svg>
+                  대화 내역 메일로 보내기
+                </button>
+                <button class="cs-btn cs-btn-secondary">다음에 할게요</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 6. Thinking 중 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 6. Thinking 중</div>
+      <div class="case-desc">SPEC 4 — User question + thinking indicator active</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">직접 입력</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row user">
+            <div class="msg-bubble user">인턴 채용 시 근로계약서 작성 방법은?</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="thinking-indicator">
+              <div class="thinking-step active">
+                <span class="step-text">답변 생각 중</span>
+                <div class="thinking-dots"><div class="thinking-dot" style="opacity:0.4;"></div><div class="thinking-dot" style="opacity:0.7;"></div><div class="thinking-dot" style="opacity:1;"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 7. 간단 로딩 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 7. 간단 로딩</div>
+      <div class="case-desc">SPEC 4 — User question + loading dots bubble</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">채용 공고 등록</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row user">
+            <div class="msg-bubble user">등록 비용이 있나요?</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot loading-bubble">
+              <div class="thinking-dots">
+                <span class="thinking-dot" style="opacity:0.4;"></span>
+                <span class="thinking-dot" style="opacity:0.7;"></span>
+                <span class="thinking-dot" style="opacity:1;"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 8. 직접 입력 모드 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 8. 직접 입력 모드</div>
+      <div class="case-desc">SPEC 5 — Header(back + "직접 입력") + guide message + input</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">직접 입력</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">궁금한 점을 자유롭게 입력해 주세요. 최대한 정확하게 답변해 드리겠습니다.</div>
+          </div>
+        </div>
+        <div class="input-bar-wrap">
+          <div class="input-container focused">
+            <textarea class="input-field" rows="1" readonly style="pointer-events:none;"></textarea>
+            <div class="input-bottom">
+              <span class="input-counter">0 / 300</span>
+              <button class="send-btn" disabled><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 9. 비로그인 → 로그인 유도 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 9. 비로그인 → 로그인 유도</div>
+      <div class="case-desc">SPEC 1 — login-required → login prompt bubble</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">채용 공고 등록</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row user">
+            <div class="msg-bubble user">채용 공고를 등록하고 싶어요</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot login-prompt-bubble">
+              <span>이 기능은 로그인 후 이용하실 수 있습니다.</span>
+              <button class="login-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4s-4 1.79-4 4s1.79 4 4 4m0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4"/></svg>
+                로그인하기
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 10. 일일 한도 초과 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 10. 일일 한도 초과</div>
+      <div class="case-desc">SPEC 2 — daily limit exceeded message</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">직접 입력</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row user">
+            <div class="msg-bubble user">추가 문의가 있어요</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">일일 최대 요청을 초과하였습니다. 내일 다시 이용해 주세요.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 11. 종료된 대화 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 11. 종료된 대화</div>
+      <div class="case-desc">SPEC 2, 5 — previous messages + system message, no chips</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">채용 공고 등록</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row user">
+            <div class="msg-bubble user">공고 등록 방법이 궁금해요</div>
+          </div>
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">기업 회원 가입 후 '채용 공고 등록' 메뉴에서 직접 등록하실 수 있습니다.</div>
+          </div>
+          <div class="msg-system">종료된 대화입니다</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 12. 대화내역 — 빈 상태 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 12. 대화내역 — 빈 상태</div>
+      <div class="case-desc">SPEC 3 — Header(back + "대화 내역") + empty state + new chat btn</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">대화 내역</div>
+        </div>
+        <div class="history-panel" style="display:flex;">
+          <div class="history-empty">
+            <span class="history-empty-icon">💬</span>
+            <span>대화 내역이 없습니다</span>
+          </div>
+          <button class="new-chat-btn" style="display:block;">+ 새 대화</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 13. 대화내역 — 리스트 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 13. 대화내역 — 리스트</div>
+      <div class="case-desc">SPEC 3 — Header(back + "대화 내역") + history items + new chat btn</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">대화 내역</div>
+        </div>
+        <div class="history-panel" style="display:flex;">
+          <div class="history-item">
+            <div class="history-item-content">
+              <div class="history-item-title">채용 공고 등록 문의</div>
+              <div class="history-item-preview">마케팅 인턴 채용 공고를 등록하고 싶은데...</div>
+              <div class="history-item-date">2026.03.22 14:30</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-item-content">
+              <div class="history-item-title">지원자 현황 확인</div>
+              <div class="history-item-preview">현재 지원자 수와 면접 일정을 확인하고...</div>
+              <div class="history-item-date">2026.03.21 10:15</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-item-content">
+              <div class="history-item-title">결제 정산 문의</div>
+              <div class="history-item-preview">이번 달 정산 내역을 확인하고 싶습니다...</div>
+              <div class="history-item-date">2026.03.20 09:00</div>
+            </div>
+          </div>
+          <button class="new-chat-btn" style="display:block;">+ 새 대화</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 14. 300자 정상 입력 -->
+    <div class="case-wrap">
+      <div class="case-title">Case 14. 300자 입력 (정상)</div>
+      <div class="case-desc">SPEC 5 — 300자 딱 맞음, 전송 가능</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">직접 입력</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">궁금한 내용을 직접 입력해주세요!</div>
+          </div>
+        </div>
+        <div class="input-bar-wrap">
+          <div class="input-container focused">
+            <textarea class="input-field" rows="3" readonly style="pointer-events:none;">안녕하세요, 저희 회사에서 미니인턴을 통해 마케팅 분야의 인턴을 채용하고 싶습니다. 몇 가지 궁금한 점이 있어서 문의드립니다. 첫째로 채용 공고 등록 시 필요한 정보가 무엇인지 알고 싶고, 둘째로 공고 노출 기간과 비용에 대해 궁금합니다. 또한 지원자 필터링 기능이 있는지, 그리고 면접 일정 조율을 플랫폼 내에서 할 수 있는지도 알고 싶습니다. 마지막으로 인턴 채용 후 근로계약서 작성 지원이 가능한지 확인해 주시면 감사하겠습니다.</textarea>
+            <div class="input-bottom">
+              <span class="input-counter">300 / 300</span>
+              <button class="send-btn active"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 15. 301자 초과 시도 (에러) -->
+    <div class="case-wrap">
+      <div class="case-title">Case 15. 글자수 초과 (에러)</div>
+      <div class="case-desc">SPEC 5 — 301자 시도 시 300번째 글자 교체 + 에러 표시 + 전송 불가</div>
+      <div class="phone" style="height:680px;">
+        <div class="header">
+          <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8l8 8l1.41-1.41L7.83 13H20z"/></svg></button>
+          <div class="avatar"><img src="./mi-bot.svg" width="36" height="36" style="border-radius:50%;"></div>
+          <div class="header-name">직접 입력</div>
+        </div>
+        <div class="chat-body" style="flex:1;">
+          <div class="msg-row">
+            <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+            <div class="msg-bubble bot">궁금한 내용을 직접 입력해주세요!</div>
+          </div>
+        </div>
+        <div class="input-bar-wrap">
+          <div class="input-container focused error">
+            <textarea class="input-field" readonly style="pointer-events:none; height:98px; max-height:98px;">안녕하세요, 저희 회사에서 미니인턴을 통해 마케팅 분야의 인턴을 채용하고 싶습니다. 몇 가지 궁금한 점이 있어서 문의드립니다. 첫째로 채용 공고 등록 시 필요한 정보가 무엇인지 알고 싶고, 둘째로 공고 노출 기간과 비용에 대해 궁금합니다. 또한 지원자 필터링 기능이 있는지, 그리고 면접 일정 조율을 플랫폼 내에서 할 수 있는지도 알고 싶습니다. 마지막으로 인턴 채용 후 근로계약서 작성 지원이 가능한지 확인해 주시면 감사하겠습니다!</textarea>
+            <div class="input-bottom">
+              <span class="input-counter error">300 / 300</span>
+              <button class="send-btn" disabled><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="m3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12L2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91"/></svg></button>
+            </div>
+          </div>
+          <div class="input-error-msg" style="display:flex;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.99989 13.3523C8.96154 13.3523 9.85819 13.1065 10.6915 12.6148C11.4921 12.1563 12.156 11.4927 12.6148 10.6923C13.1065 9.85903 13.3523 8.96154 13.3523 7.99989C13.3523 7.03824 13.1065 6.14159 12.6148 5.30827C12.1563 4.5077 11.4927 3.84381 10.6923 3.38497C9.85903 2.89332 8.96154 2.64749 7.99989 2.64749C7.03824 2.64749 6.14159 2.89332 5.30827 3.38497C4.5077 3.84346 3.84381 4.50707 3.38497 5.30744C2.89332 6.14076 2.64749 7.03824 2.64749 7.99989C2.64749 8.96154 2.89332 9.85819 3.38497 10.6915C3.84346 11.4921 4.50707 12.156 5.30744 12.6148C6.14076 13.1065 7.03824 13.3523 7.99989 13.3523ZM7.99989 1.33334C9.21821 1.33334 10.3449 1.63751 11.3815 2.24666C12.3713 2.80911 13.1907 3.62852 13.7531 4.61829C14.3586 5.6418 14.6743 6.81072 14.6664 7.99989C14.6743 9.18906 14.3586 10.358 13.7531 11.3815C13.1907 12.3713 12.3713 13.1907 11.3815 13.7531C10.358 14.3586 9.18906 14.6743 7.99989 14.6664C6.81072 14.6743 5.6418 14.3586 4.61829 13.7531C3.62996 13.1814 2.81144 12.3571 2.24666 11.3648C1.64274 10.3468 1.32704 9.18361 1.33334 7.99989C1.33334 6.79242 1.63751 5.67077 2.24666 4.63495C2.82068 3.64407 3.64407 2.82068 4.63495 2.24666C5.65304 1.64274 6.81618 1.32704 7.99989 1.33334ZM7.34324 4.64995H8.65655V8.65655H7.34324V4.64995ZM7.34324 10.0032H8.65655V11.349H7.34324V10.0032Z" fill="#FF0322"/></svg>
+            300자 이하로 작성해주세요.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /cases-grid -->
+
+</div><!-- /showcase -->
+
+</body>
+</html>
