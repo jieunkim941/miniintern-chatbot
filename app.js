@@ -967,8 +967,7 @@ async function handleUserInput(text, showThinking = false) {
 async function startWelcome() {
   navState = { userType: '구직자', category: null };
   hideInput();
-  await addBotMsg('안녕하세요! 미니인턴 AI 챗봇입니다 😊', 600);
-  await addBotMsg('궁금한 카테고리를 선택해주세요!', 600);
+  await addBotMsg('안녕하세요, 미니인턴 운영팀입니다.<br>무엇이 궁금하신가요?', 600);
   const categories = Object.keys(FAQ_TREE['구직자'].categories);
   addQuickReplies([...categories, '직접 입력'], handleCategorySelect);
 }
