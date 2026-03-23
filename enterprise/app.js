@@ -39,8 +39,11 @@ function showInput() {
   inputField.focus();
 }
 function handleInputChange(el) {
+  if (el.value.length > MAX_INPUT_LENGTH) {
+    el.value = el.value.slice(0, MAX_INPUT_LENGTH);
+  }
   const len = el.value.length;
-  const over = len > MAX_INPUT_LENGTH;
+  const over = false;
   const hasText = el.value.trim().length > 0;
   const counter = document.getElementById('inputCounter');
   const sendBtn = document.getElementById('sendBtn');
