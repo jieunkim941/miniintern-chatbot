@@ -15,6 +15,8 @@ let sessionDate = null;  // 세션 최초 생성 시간 보존
 let sessionTime = null;
 let isLoggedIn = false;
 let pendingLoginQuestion = null;  // 로그인 후 답변할 질문 저장
+let freeInputCount = 0;  // 자유 입력 횟수 (일일 최대 5회)
+const FREE_INPUT_LIMIT = 5;
 
 // ===== Input bar show/hide =====
 function hideInput() {
@@ -616,6 +618,11 @@ async function startCsInquiry() {
   showInput();
 }
 
+// ===== Free Input Limit Check =====
+function isFreeInputLimitReached() {
+  return freeInputCount >= FREE_INPUT_LIMIT;
+}
+
 // ===== Login Prompt =====
 function addLoginPrompt() {
   const row = document.createElement('div');
@@ -665,6 +672,11 @@ async function handleCategorySelect(category) {
       addLoginPrompt();
       return;
     }
+    if (isFreeInputLimitReached()) {
+      await addBotMsg('일일 최대 요청을 초과하였습니다. 0시 이후 다시 요청해 주세요.');
+      showPostAnswerChips();
+      return;
+    }
     enterChatSession('직접 입력');
     chatBody.innerHTML = '';
     messageLog = [];
@@ -700,6 +712,11 @@ async function handleQuestionSelect(questionText) {
   if (questionText === '직접 입력') {
     if (!isLoggedIn) {
       addLoginPrompt();
+      return;
+    }
+    if (isFreeInputLimitReached()) {
+      await addBotMsg('일일 최대 요청을 초과하였습니다. 0시 이후 다시 요청해 주세요.');
+      showPostAnswerChips();
       return;
     }
     await addBotMsg('궁금한 내용을 직접 입력해주세요!');
@@ -773,6 +790,11 @@ async function handlePostAnswerAction(action) {
   if (action === '직접 입력') {
     if (!isLoggedIn) {
       addLoginPrompt();
+      return;
+    }
+    if (isFreeInputLimitReached()) {
+      await addBotMsg('일일 최대 요청을 초과하였습니다. 0시 이후 다시 요청해 주세요.');
+      showPostAnswerChips();
       return;
     }
     await addBotMsg('궁금한 내용을 직접 입력해주세요!');
@@ -914,6 +936,9 @@ async function sendMessage() {
     addCsCard();
     return;
   }
+
+  // 자유 입력 카운트 증가
+  freeInputCount++;
 
   // Keyword search across entire tree
   const faq = findFaqAnswer(text);
