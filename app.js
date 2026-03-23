@@ -5,7 +5,6 @@ const headerTitle = document.getElementById('headerTitle');
 
 const historyPanel = document.getElementById('historyPanel');
 const historyBtn = document.getElementById('historyBtn');
-const inputBar = document.querySelector('.input-bar');
 
 let messageLog = [];
 let currentTab = 'chat';
@@ -94,6 +93,7 @@ const FAQ_TREE = {
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>① miniintern.com 접속 ><br>② 원하는 프로그램 선택 ><br>③ [신청하기] 클릭 ><br>④ 신청서 작성 및 제출<br><br>순서로 진행하시면 됩니다.<br><br>감사합니다.',
             imagePlaceholder: '신청 화면 단계별 안내 스크린샷',
+            imageSrc: './images/sample-guide.jpg',
             keywords: ['신청', '방법', '어떻게', '지원']
           }
         ]
@@ -117,6 +117,7 @@ const FAQ_TREE = {
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>기업 내부 자료는 신청 페이지 내 [자료실] 탭에서 확인하실 수 있습니다.<br><br>감사합니다.',
             imagePlaceholder: '자료실 탭 위치 안내 스크린샷',
+            imageSrc: './images/sample-guide.jpg',
             keywords: ['내부', '자료', '자료실', '기업']
           },
           {
@@ -140,6 +141,7 @@ const FAQ_TREE = {
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>수료 후 마이페이지 > 수료증 탭에서 직접 출력 및 다운로드 가능합니다.<br><br>감사합니다.',
             imagePlaceholder: '마이페이지 수료증 탭 위치 안내 스크린샷',
+            imageSrc: './images/sample-guide.jpg',
             keywords: ['수료증', '발급', '출력', '다운']
           },
           {
@@ -158,6 +160,7 @@ const FAQ_TREE = {
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>마이페이지 > 이력서 탭에서 등록 및 수정하실 수 있습니다.<br><br>감사합니다.',
             imagePlaceholder: '마이페이지 이력서 탭 위치 안내 스크린샷',
+            imageSrc: './images/sample-guide.jpg',
             keywords: ['이력서', '등록', '프로필']
           },
           {
@@ -213,6 +216,7 @@ const FAQ_TREE = {
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>[마이 커리어] - 해피폴리오 [구매 내역]에서 다운받으실 수 있습니다.<br><br>감사합니다.',
             imagePlaceholder: '마이 커리어 > 구매 내역 탭 위치 안내 스크린샷',
+            imageSrc: './images/sample-guide.jpg',
             keywords: ['구매', '다운', '콘텐츠', '어디']
           },
           {
@@ -248,6 +252,7 @@ const FAQ_TREE = {
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관 설정 > 기업 프로필에서 로고·소개 등을 수정하실 수 있습니다.<br><br>감사합니다.',
             imagePlaceholder: '기업 프로필 수정 화면 안내 스크린샷',
+            imageSrc: './images/sample-guide.jpg',
             keywords: ['기업', '정보', '로고', '소개', '수정']
           },
           {
@@ -255,6 +260,7 @@ const FAQ_TREE = {
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관 설정 > 멤버 관리에서 해당 담당자의 권한을 [퇴사]로 변경해 주시면 됩니다.<br><br>감사합니다.',
             imagePlaceholder: '권한 변경 화면 안내 스크린샷',
+            imageSrc: './images/sample-guide.jpg',
             keywords: ['퇴사', '권한', '제거', '담당자']
           },
           {
@@ -268,6 +274,7 @@ const FAQ_TREE = {
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관 설정 > 멤버 관리 > [초대] 버튼을 통해 추가 담당자를 초대할 수 있습니다.<br><br>감사합니다.',
             imagePlaceholder: '멤버 초대 화면 안내 스크린샷',
+            imageSrc: './images/sample-guide.jpg',
             keywords: ['초대', '추가', '담당자', '멤버']
           }
         ]
@@ -295,6 +302,7 @@ const FAQ_TREE = {
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>채용관리 > 지원자 목록 > 해당 지원자 클릭 시 이력서와 기획안을 열람할 수 있습니다.<br><br>감사합니다.',
             imagePlaceholder: '지원자 상세 열람 화면 안내 스크린샷',
+            imageSrc: './images/sample-guide.jpg',
             keywords: ['지원자', '이력서', '기획안', '열람']
           },
           {
@@ -302,6 +310,7 @@ const FAQ_TREE = {
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>평가 상태는 미열람 > 검토중 > 서류합격 > 최종합격 / 불합격 순으로 변경 가능합니다.<br>기업회원 메인 > 지원자 관리 > [평가하기]에서 진행하세요.<br><br>감사합니다.',
             imagePlaceholder: '평가 상태 변경 화면 안내 스크린샷',
+            imageSrc: './images/sample-guide.jpg',
             keywords: ['평가', '상태', '변경', '합격']
           }
         ]
@@ -335,6 +344,7 @@ const FAQ_TREE = {
             answerType: 'image',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>recruitment.miniintern.com 접속 > 채용관리 > [공고 등록] 버튼을 눌러 진행해 주세요.<br><br>감사합니다.',
             imagePlaceholder: '공고 등록 화면 안내 스크린샷',
+            imageSrc: './images/sample-guide.jpg',
             keywords: ['공고', '등록', '작성']
           }
         ]
@@ -483,7 +493,7 @@ function addDevComment(comment) {
 // ===== Unified Answer Renderer =====
 async function renderAnswer(questionObj, showThinking = false) {
   if (questionObj.answerType === 'image') {
-    await addBotMsgWithImage(questionObj.answer, questionObj.imagePlaceholder, 600, showThinking);
+    await addBotMsgWithImage(questionObj.answer, questionObj.imagePlaceholder, questionObj.imageSrc || null, 600, showThinking);
   } else {
     await addBotMsg(questionObj.answer, 600, showThinking);
   }
@@ -499,15 +509,18 @@ async function renderAnswer(questionObj, showThinking = false) {
 }
 
 // ===== Bot message with image placeholder =====
-function addBotMsgWithImage(text, imagePlaceholder, delay = 600, showThinking = false) {
+function addBotMsgWithImage(text, imagePlaceholder, imageSrc, delay = 600, showThinking = false) {
+  const imageContent = imageSrc
+    ? `<div class="image-thumb" onclick="openImageViewer('${imageSrc}')"><img src="${imageSrc}" alt="${imagePlaceholder}"></div>`
+    : `<div class="image-placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2M8.5 13.5l2.5 3.01L14.5 12l4.5 6H5z"/></svg>
+        <span>${imagePlaceholder}</span>
+      </div>`;
   const bubbleHTML = `
     <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
     <div class="msg-bubble bot bubble-with-image">
       <div class="bubble-text">${text}</div>
-      <div class="image-placeholder">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2M8.5 13.5l2.5 3.01L14.5 12l4.5 6H5z"/></svg>
-        <span>${imagePlaceholder}</span>
-      </div>
+      ${imageContent}
     </div>`;
 
   return new Promise(resolve => {
@@ -633,6 +646,21 @@ function addContactCard() {
     </div>`;
   chatBody.appendChild(row);
   scrollBottom();
+}
+
+// ===== Image Viewer =====
+function openImageViewer(src) {
+  const viewer = document.createElement('div');
+  viewer.className = 'image-viewer';
+  viewer.innerHTML = `
+    <div class="image-viewer-backdrop" onclick="this.parentElement.remove()"></div>
+    <div class="image-viewer-content">
+      <img src="${src}" alt="이미지 전체보기">
+      <button class="image-viewer-close" onclick="this.closest('.image-viewer').remove()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z"/></svg>
+      </button>
+    </div>`;
+  document.body.appendChild(viewer);
 }
 
 function copyText(text, el) {
