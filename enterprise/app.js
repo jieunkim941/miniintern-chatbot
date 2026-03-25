@@ -56,7 +56,7 @@ function handleInputChange(el) {
   const counter = document.getElementById('inputCounter');
   const sendBtn = document.getElementById('sendBtn');
 
-  if (inputError) inputError.style.display = over ? 'flex' : 'none';
+  if (inputError) inputError.style.display = over ? 'inline' : 'none';
   if (inputContainer) inputContainer.classList.toggle('error', over);
   if (counter) {
     counter.textContent = `${len} / ${MAX_INPUT_LENGTH}`;

@@ -794,7 +794,7 @@ body {
 .input-bottom {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  gap: 10px;
 }
 .input-counter {
   font-family: 'Pretendard', sans-serif;
@@ -802,11 +802,12 @@ body {
   font-size: 12px;
   line-height: 16px;
   color: #B5B9BE;
-  padding-top: 8px;
+  white-space: nowrap;
   flex: 1;
 }
 .input-counter.error {
   color: var(--red-500);
+  flex: 0;
 }
 .send-btn {
   width: 36px;
@@ -830,15 +831,10 @@ body {
   display: none;
   font-family: 'Pretendard', sans-serif;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 12px;
+  line-height: 16px;
   color: var(--red-500);
-  align-items: center;
-  gap: 4px;
-  padding-top: 8px;
-}
-.input-error-msg svg {
-  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 

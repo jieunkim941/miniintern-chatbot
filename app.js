@@ -57,7 +57,7 @@ function handleInputChange(el) {
   const sendBtn = document.getElementById('sendBtn');
 
   // 에러 상태
-  if (inputError) inputError.style.display = over ? 'flex' : 'none';
+  if (inputError) inputError.style.display = over ? 'inline' : 'none';
   if (inputContainer) inputContainer.classList.toggle('error', over);
   if (counter) {
     counter.textContent = `${len} / ${MAX_INPUT_LENGTH}`;
