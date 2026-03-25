@@ -448,7 +448,7 @@ function addCsCard() {
     <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
     <div class="cs-card">
       <div class="cs-card-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 32 32" fill="none"><path d="M23.999 4.69238L24.3037 4.70703C25.0086 4.77236 25.6605 5.05947 26.1484 5.50977C26.7033 6.02198 26.9991 6.69864 27 7.38574V27.0771C27 27.1113 26.9863 27.1624 26.9316 27.2129C26.8742 27.2659 26.7799 27.3075 26.667 27.3076L26.5869 27.2998C26.51 27.2854 26.4464 27.2518 26.4033 27.2119H26.4023L21.4609 22.6494L21.1729 22.3848H8.00098C7.18084 22.3839 6.40915 22.0819 5.85156 21.5674C5.36602 21.1192 5.07838 20.5451 5.01367 19.9482L5 19.6914V7.38574C5.00087 6.69864 5.29666 6.02198 5.85156 5.50977C6.33951 5.05947 6.9914 4.77236 7.69629 4.70703L8.00098 4.69238H23.999Z" stroke="currentColor" stroke-width="2"/></svg>
         <span>운영팀 직접 문의</span>
       </div>
       <p class="cs-card-desc">더 정확한 답변을 위해 운영팀이 직접 도와드릴게요.</p>
@@ -474,7 +474,7 @@ function addEscalationCard() {
     <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
     <div class="cs-card">
       <div class="cs-card-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 32 32" fill="none"><path d="M23.999 4.69238L24.3037 4.70703C25.0086 4.77236 25.6605 5.05947 26.1484 5.50977C26.7033 6.02198 26.9991 6.69864 27 7.38574V27.0771C27 27.1113 26.9863 27.1624 26.9316 27.2129C26.8742 27.2659 26.7799 27.3075 26.667 27.3076L26.5869 27.2998C26.51 27.2854 26.4464 27.2518 26.4033 27.2119H26.4023L21.4609 22.6494L21.1729 22.3848H8.00098C7.18084 22.3839 6.40915 22.0819 5.85156 21.5674C5.36602 21.1192 5.07838 20.5451 5.01367 19.9482L5 19.6914V7.38574C5.00087 6.69864 5.29666 6.02198 5.85156 5.50977C6.33951 5.05947 6.9914 4.77236 7.69629 4.70703L8.00098 4.69238H23.999Z" stroke="currentColor" stroke-width="2"/></svg>
         <span>운영팀 문의</span>
       </div>
       <div class="escalation-contacts">
@@ -549,7 +549,7 @@ function addContactCard() {
     <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
     <div class="contact-card">
       <div class="contact-card-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32" fill="none"><path d="M23.999 4.69238L24.3037 4.70703C25.0086 4.77236 25.6605 5.05947 26.1484 5.50977C26.7033 6.02198 26.9991 6.69864 27 7.38574V27.0771C27 27.1113 26.9863 27.1624 26.9316 27.2129C26.8742 27.2659 26.7799 27.3075 26.667 27.3076L26.5869 27.2998C26.51 27.2854 26.4464 27.2518 26.4033 27.2119H26.4023L21.4609 22.6494L21.1729 22.3848H8.00098C7.18084 22.3839 6.40915 22.0819 5.85156 21.5674C5.36602 21.1192 5.07838 20.5451 5.01367 19.9482L5 19.6914V7.38574C5.00087 6.69864 5.29666 6.02198 5.85156 5.50977C6.33951 5.05947 6.9914 4.77236 7.69629 4.70703L8.00098 4.69238H23.999Z" stroke="currentColor" stroke-width="2"/></svg>
         운영팀 문의 채널
       </div>
       <div class="contact-card-list">
