@@ -124,11 +124,13 @@
   .section-label { font-size: 14px; font-weight: 500; color: var(--gray-700); margin-bottom: 8px; }
   .chat-container { background: var(--white); border: 1px solid var(--gray-300); border-radius: 8px; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px; }
   .msg { display: flex; flex-direction: column; max-width: 70%; }
-  .msg.user { align-self: flex-end; align-items: flex-end; }
+  .msg.user { align-self: flex-start; align-items: flex-start; }
+  .msg.bot, .msg.admin { align-self: flex-end; align-items: flex-end; }
   .msg .sender { font-size: 11px; font-weight: 500; color: var(--gray-500); margin-bottom: 2px; }
   .msg .bubble { padding: 8px 12px; border-radius: 10px; font-size: 13px; line-height: 1.55; color: var(--gray-800); }
   .msg.bot .bubble { background: var(--gray-200); }
   .msg.user .bubble { background: var(--blue-100); }
+  .msg.system { align-self: center; align-items: center; }
   .msg.escalation .esc-label { font-size: 11px; font-weight: 500; color: var(--orange-500); margin-bottom: 2px; }
   .msg.escalation .bubble { background: var(--orange-100); border: 1px solid var(--orange-500); }
   .msg.admin .bubble { background: var(--blue-100); border: 1px solid var(--blue-200); }
@@ -140,6 +142,18 @@
   .msg.system .bubble { background: none; color: var(--gray-500); font-size: 12px; text-align: center; padding: 12px 0; border-top: 1px dashed var(--gray-300); border-bottom: 1px dashed var(--gray-300); border-radius: 0; width: 100%; }
   .sla-warning { background: var(--red-100); border: 1px solid var(--red-500); border-radius: 6px; padding: 10px 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--red-500); font-weight: 500; }
   .sla-warning .icon { font-size: 16px; }
+
+  /* ===== New Message Indicator ===== */
+  .new-msg-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--red-500); margin-right: 6px; flex-shrink: 0; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .new-msg-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 10px; background: var(--red-500); color: var(--white); font-size: 11px; font-weight: 600; margin-left: 8px; }
+  .table-row.has-new { background: var(--blue-100); }
+  .table-row.has-new:hover { background: #E5F3FF; }
+  .msg-divider-new { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
+  .msg-divider-new::before, .msg-divider-new::after { content: ''; flex: 1; height: 1px; background: var(--red-500); opacity: 0.3; }
+  .msg-divider-new span { font-size: 11px; font-weight: 600; color: var(--red-500); white-space: nowrap; }
+  .msg.needs-reply .bubble { background: var(--orange-100); border: 1px solid var(--orange-500); }
+  .msg.needs-reply .needs-reply-label { font-size: 11px; font-weight: 500; color: var(--orange-500); margin-bottom: 2px; }
 
   /* ===== Action Panel ===== */
   .action-panel { background: var(--white); border: 1px solid var(--gray-300); border-radius: 8px; overflow: hidden; position: sticky; top: 86px; }
@@ -353,9 +367,9 @@
 <script>
 // ===== Data =====
 const inquiries = [
-  { no: 9, user: "장하늘 (2201)", type: "일반", time: "2026.03.29 15:30", msg: "프로필 사진 변경이 안 돼요.", status: "미처리", date: "2026.03.29", sla: true },
-  { no: 8, user: "윤도현 (2150)", type: "기업", time: "2026.03.31 11:00", msg: "운영자 답변 후 추가 질문 드립니다.", status: "처리 중", date: "2026.03.31", tag: "" },
+  { no: 8, user: "윤도현 (2150)", type: "기업", time: "2026.03.31 11:00", msg: "감사합니다. 그런데 권한을 나중에 변경할 수도 있나요?", status: "미처리", date: "2026.03.31", tag: "", newMsg: true },
   { no: 7, user: "김서연 (2048)", type: "일반", time: "2026.03.31 09:12", msg: "결제 취소가 안 돼요. 챗봇이 답변을 못해서 직접 문의합니다.", status: "미처리", date: "2026.03.31" },
+  { no: 9, user: "장하늘 (2201)", type: "일반", time: "2026.03.29 15:30", msg: "프로필 사진 변경이 안 돼요.", status: "미처리", date: "2026.03.29", sla: true },
   { no: 6, user: "이준호 (1892)", type: "기업", time: "2026.03.30 17:45", msg: "기업 서비스 이용 중 오류가 발생했는데 챗봇에서 해결이 안 됩니다.", status: "미처리", date: "2026.03.30" },
   { no: 5, user: "박지민 (1756)", type: "일반", time: "2026.03.30 14:22", msg: "이력서 작성 관련 질문인데 챗봇 답변이 부정확해요.", status: "처리 중", date: "2026.03.30", tag: "" },
   { no: 4, user: "최윤아 (1634)", type: "일반", time: "2026.03.29 11:03", msg: "미니인턴 지원 후 결과를 어디서 확인하나요?", status: "처리 중", date: "2026.03.29", tag: "이력서" },
@@ -423,7 +437,8 @@ const chatByInquiry = {
     { s: "user", t: "채팅 내역 전송하기", time: "2026.03.30 10:01", esc: true },
     { s: "bot", t: "채팅 내역이 운영팀에 전송되었습니다! 담당자가 확인 후 연락드릴게요.", time: "2026.03.30 10:01" },
     { s: "admin", t: "안녕하세요, 윤도현님. 운영팀입니다.\n기업 계정 > 설정 > 팀 관리에서 직원을 초대하고 권한을 설정할 수 있습니다.\n관리자/편집자/뷰어 3가지 권한이 있으며, 초대 시 선택 가능합니다.", time: "2026.03.30 11:30" },
-    { s: "user", t: "감사합니다. 그런데 추가 질문이 있어요. 권한을 나중에 변경할 수도 있나요?", time: "2026.03.31 11:00" },
+    { s: "newMsgDivider" },
+    { s: "user", t: "감사합니다. 그런데 추가 질문이 있어요. 권한을 나중에 변경할 수도 있나요?", time: "2026.03.31 11:00", needsReply: true },
   ],
 
   // #9 미처리 — SLA 초과 (24시간 넘김)
@@ -459,9 +474,12 @@ function renderTable(filter = 'all') {
   const body = document.getElementById('tableBody');
   body.innerHTML = filtered.map(i => {
     const badgeClass = i.status === '미처리' ? 'badge-red' : i.status === '처리 중' ? 'badge-blue' : 'badge-green';
-    return `<div class="table-row" onclick="openDetail(${i.no})">
+    const rowClass = i.newMsg ? 'table-row has-new' : 'table-row';
+    const newDot = i.newMsg ? '<span class="new-msg-dot"></span>' : '';
+    const newBadge = i.newMsg ? '<span class="new-msg-badge">새 메시지</span>' : '';
+    return `<div class="${rowClass}" onclick="openDetail(${i.no})">
       <div class="cell cell-no">${i.no}</div>
-      <div class="cell cell-user">${i.user}</div>
+      <div class="cell cell-user">${newDot}${i.user}${newBadge}</div>
       <div class="cell cell-type">${i.type}</div>
       <div class="cell cell-time">${i.time}</div>
       <div class="cell cell-msg">${i.msg}</div>
@@ -501,17 +519,22 @@ document.addEventListener('click', e => {
 function renderChat(messages, userName) {
   const container = document.getElementById('chatContainer');
   container.innerHTML = messages.map(m => {
+    if (m.s === 'newMsgDivider') {
+      return `<div class="msg-divider-new"><span>새 메시지</span></div>`;
+    }
     if (m.s === 'system') {
       return `<div class="msg system"><div class="bubble">${m.t}</div></div>`;
     }
     const isAdmin = m.s === 'admin';
-    const cls = isAdmin ? 'msg bot admin' : (m.s === 'user' ? 'msg user' : 'msg bot');
-    const escCls = m.esc ? ' escalation' : '';
+    let cls = isAdmin ? 'msg bot admin' : (m.s === 'user' ? 'msg user' : 'msg bot');
+    if (m.esc) cls += ' escalation';
+    if (m.needsReply) cls += ' needs-reply';
     const sender = isAdmin ? '운영자' : (m.s === 'bot' ? '챗봇' : userName);
     const escLabel = m.esc ? '<div class="esc-label">⚠ 채팅 내역 전송 요청</div>' : '';
+    const needsLabel = m.needsReply ? '<div class="needs-reply-label">💬 답변 필요</div>' : '';
     const text = m.t.replace(/\n/g, '<br>');
-    return `<div class="${cls}${escCls}">
-      ${escLabel}
+    return `<div class="${cls}">
+      ${escLabel}${needsLabel}
       <div class="sender">${sender}</div>
       <div class="bubble">${text}</div>
       <div class="time">${m.time}</div>
