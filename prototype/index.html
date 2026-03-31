@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미니인턴 빅브라더 — 유저 의견</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+  :root {
+    --white: #FFFFFF;
+    --gray-50: #FAFBFC;
+    --gray-100: #F7F7F8;
+    --gray-200: #F2F3F5;
+    --gray-300: #E5E7EA;
+    --gray-400: #D2D4D7;
+    --gray-500: #B5B9BE;
+    --gray-600: #94999E;
+    --gray-700: #6B6F76;
+    --gray-800: #41454D;
+    --gray-900: #2E3138;
+    --black: #1A1B1C;
+    --blue-100: #F1F9FF;
+    --blue-200: #BFE4FF;
+    --blue-500: #17A1FF;
+    --blue-600: #0087E3;
+    --red-100: #FDF3F3;
+    --red-500: #FF0322;
+    --orange-100: #FFF2EA;
+    --orange-500: #FE883C;
+    --green-100: #E8F9F2;
+    --green-500: #1BC481;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Pretendard', -apple-system, sans-serif; background: var(--white); color: var(--black); }
+  a { text-decoration: none; color: inherit; }
+
+  /* ===== GNB (Big Brother Admin — DS 기준) ===== */
+  .gnb { height: 60px; background: var(--gray-900); display: flex; align-items: center; justify-content: center; position: sticky; top: 0; z-index: 100; }
+  .gnb-inner { width: 1280px; display: flex; align-items: center; padding: 0 10px; }
+  .gnb-logo { display: flex; align-items: baseline; gap: 0; margin-right: 28px; }
+  .gnb-logo-text { color: var(--white); font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .gnb-logo-admin { font-size: 9px; color: var(--gray-500); margin-left: 2px; letter-spacing: 0.5px; }
+  .gnb-nav { display: flex; gap: 0; }
+  .gnb-nav a { color: var(--white); font-size: 14px; padding: 20px 16px; transition: all 0.15s; line-height: 20px; }
+  .gnb-nav a:hover { font-weight: 600; }
+  .gnb-nav a.active { font-weight: 700; }
+  .gnb-trailing { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+  .gnb-profile { display: flex; align-items: center; gap: 6px; color: var(--white); font-size: 14px; }
+  .gnb-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--blue-500); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--white); }
+
+  /* ===== Page Layout ===== */
+  .page-wrap { max-width: 1210px; margin: 0 auto; padding: 32px 0 60px; min-height: calc(100vh - 62px - 143px); }
+
+  /* ===== Tabs ===== */
+  .tabs { display: flex; border-bottom: 1px solid var(--gray-300); margin-bottom: 24px; }
+  .tab { padding: 14px 16px; font-size: 14px; color: var(--gray-500); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .tab:hover { color: var(--gray-700); }
+  .tab.active { color: var(--black); font-weight: 500; border-bottom-color: var(--black); }
+
+  /* ===== Title ===== */
+  .page-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+
+  /* ===== Filter Dropdown (Sort Guide DS) ===== */
+  .filter-bar { display: flex; justify-content: flex-end; margin-bottom: 24px; }
+  .filter-dropdown { position: relative; }
+  .filter-btn { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1px solid var(--gray-400); border-radius: 6px; background: var(--white); font-size: 14px; font-family: inherit; color: var(--black); cursor: pointer; min-width: 120px; transition: border-color 0.15s; }
+  .filter-btn:hover, .filter-btn.open { border-color: var(--blue-500); }
+  .filter-btn .label { flex: 1; }
+  .filter-btn .arrow { font-size: 10px; color: var(--gray-500); transition: transform 0.2s; }
+  .filter-btn.open .arrow { transform: rotate(180deg); }
+  .filter-list { position: absolute; top: calc(100% + 4px); right: 0; min-width: 100%; background: var(--white); border: 1px solid var(--gray-300); border-radius: 6px; box-shadow: 0 4px 8px rgba(26,27,28,0.12); z-index: 10; display: none; padding: 4px 0; }
+  .filter-list.show { display: block; }
+  .filter-item { padding: 8px 12px; font-size: 14px; color: var(--gray-800); cursor: pointer; transition: background 0.1s; }
+  .filter-item:hover { background: var(--gray-100); }
+  .filter-item.active { color: var(--blue-500); font-weight: 500; }
+
+  /* ===== Table ===== */
+  .table-wrap { width: 100%; }
+  .table-header { display: flex; height: 36px; align-items: center; border-top: 1px solid var(--black); border-bottom: 1px solid var(--black); }
+  .table-header .cell { font-size: 13px; font-weight: 500; color: var(--gray-700); padding: 0 8px; }
+  .table-row { display: flex; height: 60px; align-items: center; border-bottom: 1px solid var(--gray-300); cursor: pointer; transition: background 0.15s; }
+  .table-row:hover { background: var(--gray-50); }
+  .cell { padding: 0 8px; font-size: 14px; color: var(--gray-800); }
+  .cell-no { width: 60px; }
+  .cell-user { width: 150px; color: var(--black); font-weight: 500; }
+  .cell-type { width: 80px; }
+  .cell-time { width: 160px; }
+  .cell-msg { width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cell-status { width: 100px; }
+  .cell-date { width: 180px; }
+
+  /* ===== Badge ===== */
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+  .badge-red { background: var(--red-100); color: var(--red-500); }
+  .badge-blue { background: var(--blue-100); color: var(--blue-500); }
+  .badge-green { background: var(--green-100); color: var(--green-500); }
+
+  /* ===== Pagination ===== */
+  .pagination { text-align: center; padding: 20px 0; }
+  .pagination span { font-size: 14px; font-weight: 500; color: var(--blue-500); }
+
+  /* ===== Detail Page ===== */
+  .detail-page { background: var(--gray-100); min-height: calc(100vh - 62px); }
+  .detail-topbar { background: var(--white); border-bottom: 1px solid var(--gray-300); padding: 18px 0; }
+  .detail-topbar-inner { max-width: 1210px; margin: 0 auto; }
+  .detail-title-row { display: flex; align-items: center; gap: 12px; }
+  .detail-title { font-size: 20px; font-weight: 700; }
+
+  .detail-content { max-width: 1210px; margin: 0 auto; padding: 24px 0 60px; display: flex; gap: 24px; }
+  .detail-left { flex: 1; min-width: 0; }
+  .detail-right { width: 366px; flex-shrink: 0; }
+
+  /* ===== Info Card ===== */
+  .info-card { background: var(--white); border: 1px solid var(--gray-300); border-radius: 8px; padding: 14px 24px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .info-user-name { font-size: 16px; font-weight: 600; color: var(--black); }
+  .info-divider { width: 1px; height: 16px; background: var(--gray-400); }
+  .info-meta { font-size: 13px; color: var(--gray-600); }
+  .info-meta .type-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; background: var(--gray-200); color: var(--gray-700); font-size: 12px; font-weight: 500; margin-right: 8px; }
+  .info-status { margin-left: auto; }
+
+  /* ===== Chat ===== */
+  .section-label { font-size: 14px; font-weight: 500; color: var(--gray-700); margin-bottom: 8px; }
+  .chat-container { background: var(--white); border: 1px solid var(--gray-300); border-radius: 8px; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { display: flex; flex-direction: column; max-width: 70%; }
+  .msg.user { align-self: flex-end; align-items: flex-end; }
+  .msg .sender { font-size: 11px; font-weight: 500; color: var(--gray-500); margin-bottom: 2px; }
+  .msg .bubble { padding: 8px 12px; border-radius: 10px; font-size: 13px; line-height: 1.55; color: var(--gray-800); }
+  .msg.bot .bubble { background: var(--gray-200); }
+  .msg.user .bubble { background: var(--blue-100); }
+  .msg.escalation .esc-label { font-size: 11px; font-weight: 500; color: var(--orange-500); margin-bottom: 2px; }
+  .msg.escalation .bubble { background: var(--orange-100); border: 1px solid var(--orange-500); }
+  .msg.admin .bubble { background: var(--blue-100); border: 1px solid var(--blue-200); }
+  .msg.admin .sender { color: var(--blue-500); }
+  .msg .time { font-size: 10px; color: var(--gray-500); margin-top: 2px; }
+  .reply-complete { background: var(--gray-100); border: 1px solid var(--gray-300); border-radius: 6px; padding: 16px; text-align: center; color: var(--gray-600); font-size: 13px; }
+  .reply-complete .check { color: var(--green-500); font-weight: 600; margin-bottom: 4px; font-size: 14px; }
+  .msg.system { align-self: center; max-width: 100%; }
+  .msg.system .bubble { background: none; color: var(--gray-500); font-size: 12px; text-align: center; padding: 12px 0; border-top: 1px dashed var(--gray-300); border-bottom: 1px dashed var(--gray-300); border-radius: 0; width: 100%; }
+  .sla-warning { background: var(--red-100); border: 1px solid var(--red-500); border-radius: 6px; padding: 10px 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--red-500); font-weight: 500; }
+  .sla-warning .icon { font-size: 16px; }
+
+  /* ===== Action Panel ===== */
+  .action-panel { background: var(--white); border: 1px solid var(--gray-300); border-radius: 8px; overflow: hidden; position: sticky; top: 86px; }
+  .panel-section { padding: 20px; }
+  .panel-section + .panel-section { border-top: 1px solid var(--gray-300); }
+  .panel-label { font-size: 13px; font-weight: 500; color: var(--gray-700); margin-bottom: 10px; }
+  .select-box { width: 100%; padding: 10px 12px; border: 1px solid var(--gray-400); border-radius: 6px; font-size: 14px; font-family: inherit; color: var(--black); background: var(--white); cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2394999E' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+  .select-box:focus { outline: none; border-color: var(--blue-500); }
+  .textarea { width: 100%; height: 120px; padding: 10px 12px; border: 1px solid var(--gray-400); border-radius: 6px; font-size: 13px; font-family: inherit; color: var(--black); resize: vertical; }
+  .textarea::placeholder { color: var(--gray-500); }
+  .textarea:focus { outline: none; border-color: var(--blue-500); }
+  .btn-send { width: 100%; padding: 12px; border: none; border-radius: 6px; background: var(--blue-500); color: var(--white); font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; transition: background 0.2s; }
+  .btn-send:hover { background: var(--blue-600); }
+  .btn-save { width: 100%; padding: 12px; border: none; border-radius: 6px; background: var(--gray-400); color: var(--white); font-size: 14px; font-weight: 500; font-family: inherit; cursor: not-allowed; transition: all 0.2s; }
+  .btn-save.active { background: var(--blue-500); cursor: pointer; }
+  .btn-save.active:hover { background: var(--blue-600); }
+
+  /* ===== Footer (DS 기준 1204px) ===== */
+  .footer { background: var(--white); border-top: 1px solid var(--gray-300); padding: 24px 0 40px; }
+  .footer-inner { width: 1204px; margin: 0 auto; }
+  .footer-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .footer-logo { display: flex; align-items: center; }
+  .footer-logo img, .footer-logo-text { font-size: 16px; font-weight: 700; color: var(--black); }
+  .footer-links { display: flex; gap: 40px; }
+  .footer-links a { font-size: 13px; color: var(--gray-800); }
+  .footer-links a:hover { color: var(--black); }
+  .footer-contact { display: flex; gap: 0; flex-direction: column; margin-bottom: 20px; }
+  .footer-contact-row { display: flex; align-items: baseline; gap: 0; margin-bottom: 6px; }
+  .footer-contact-label { font-size: 14px; font-weight: 500; color: var(--black); width: 82px; }
+  .footer-contact-value { font-size: 12px; color: var(--gray-700); }
+  .footer-contact-value a { color: var(--blue-500); }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+  .footer-legal { font-size: 11px; color: var(--gray-600); line-height: 1.7; max-width: 1094px; }
+  .footer-copyright { font-size: 12px; color: var(--gray-600); }
+  .footer-sns { margin-bottom: 20px; display: flex; justify-content: flex-end; }
+
+  /* ===== Toast ===== */
+  .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--gray-900); color: var(--white); padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 200; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); pointer-events: none; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ===== Page transition ===== */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- GNB (Big Brother Admin — DS 기준 1280px) -->
+<nav class="gnb">
+  <div class="gnb-inner">
+    <div class="gnb-logo">
+      <span class="gnb-logo-text">miniintern</span>
+    </div>
+    <div class="gnb-nav">
+      <a href="#">인재풀</a>
+      <a href="#">미니인턴</a>
+      <a href="#">채용관</a>
+      <a href="#">해피폴리오</a>
+      <a href="#">M클래스</a>
+      <a href="#">스킬업</a>
+      <a href="#">기업회원</a>
+      <a href="#">배너</a>
+      <a href="#">공지사항</a>
+      <a href="#">알림</a>
+      <a href="#" class="active">유저 의견</a>
+    </div>
+    <div class="gnb-trailing">
+      <div class="gnb-profile">
+        <div class="gnb-avatar">홍</div>
+        홍길동
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE 1: 문의 목록 -->
+<div class="page active" id="page-list">
+  <div class="page-wrap">
+    <h1 class="page-title">유저 의견</h1>
+
+    <div class="tabs">
+      <div class="tab" onclick="showToast('콘텐츠 수요 탭은 프로토타입에 미포함')">콘텐츠 수요</div>
+      <div class="tab active">문의 내역</div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-dropdown" id="filterDropdown">
+        <button class="filter-btn" onclick="toggleFilter()">
+          <span class="label" id="filterLabel">전체</span>
+          <span class="arrow">▾</span>
+        </button>
+        <div class="filter-list" id="filterList">
+          <div class="filter-item active" data-filter="all">전체</div>
+          <div class="filter-item" data-filter="미처리">미처리</div>
+          <div class="filter-item" data-filter="처리 중">처리 중</div>
+          <div class="filter-item" data-filter="완료">완료</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-header">
+        <div class="cell cell-no">번호</div>
+        <div class="cell cell-user">유저 정보</div>
+        <div class="cell cell-type">유저 유형</div>
+        <div class="cell cell-time">인입 시각</div>
+        <div class="cell cell-msg">마지막 메시지</div>
+        <div class="cell cell-status">처리 상태</div>
+        <div class="cell cell-date">입력일시</div>
+      </div>
+      <div id="tableBody"></div>
+    </div>
+
+    <div class="pagination"><span>1</span></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-logo"><span class="footer-logo-text">miniintern</span></div>
+        <div class="footer-links">
+          <a href="#">이용약관</a>
+          <a href="#">개인정보취급방침</a>
+          <a href="#">새로운 소식</a>
+          <a href="#">자주하는 질문</a>
+        </div>
+      </div>
+      <div class="footer-contact">
+        <div class="footer-contact-row">
+          <span class="footer-contact-label">고객센터</span>
+          <span class="footer-contact-value">이메일 help@miniintern.com / 전화 010-4875-3056</span>
+        </div>
+        <div class="footer-contact-row">
+          <span class="footer-contact-label">기업 서비스</span>
+          <span class="footer-contact-value">기업 회원 페이지 <a href="#">바로가기</a></span>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-legal">(주)오픈놀 | 대표이사 : 권인택 | 이메일 : help@miniintern.com | 문의 : 070-8221-3056<br>서울특별시 영등포구 양평로 2 주식회사 오픈놀 | 사업자등록번호 : 110-81-99930<br>직업정보제공사업 : 서울서부 제2018-19호 | 통신판매업신고 : 제2021-서울영등포-2467호</div>
+        <div class="footer-copyright">ⓒ OPENKNOWL</div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- PAGE 2: 문의 상세 -->
+<div class="page" id="page-detail">
+  <div class="detail-page">
+    <div class="detail-topbar">
+      <div class="detail-topbar-inner">
+        <div class="detail-title-row">
+          <span class="detail-title">문의 상세</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="detail-content">
+      <!-- Left -->
+      <div class="detail-left">
+        <div class="info-card">
+          <span class="info-user-name" id="detailUser">김서연 (2048)</span>
+          <span class="info-divider"></span>
+          <span class="info-meta"><span class="type-badge" id="detailType">일반</span><span id="detailTime">2026.03.31 09:12</span></span>
+          <span id="detailBadge" class="badge badge-red info-status">미처리</span>
+        </div>
+        <div id="slaWarning"></div>
+        <div class="section-label">대화 내역</div>
+        <div class="chat-container" id="chatContainer"></div>
+      </div>
+
+      <!-- Right -->
+      <div class="detail-right">
+        <div class="action-panel" id="actionPanel"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-logo"><span class="footer-logo-text">miniintern</span></div>
+        <div class="footer-links">
+          <a href="#">이용약관</a>
+          <a href="#">개인정보취급방침</a>
+          <a href="#">새로운 소식</a>
+          <a href="#">자주하는 질문</a>
+        </div>
+      </div>
+      <div class="footer-contact">
+        <div class="footer-contact-row">
+          <span class="footer-contact-label">고객센터</span>
+          <span class="footer-contact-value">이메일 help@miniintern.com / 전화 010-4875-3056</span>
+        </div>
+        <div class="footer-contact-row">
+          <span class="footer-contact-label">기업 서비스</span>
+          <span class="footer-contact-value">기업 회원 페이지 <a href="#">바로가기</a></span>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-legal">(주)오픈놀 | 대표이사 : 권인택 | 이메일 : help@miniintern.com | 문의 : 070-8221-3056<br>서울특별시 영등포구 양평로 2 주식회사 오픈놀 | 사업자등록번호 : 110-81-99930<br>직업정보제공사업 : 서울서부 제2018-19호 | 통신판매업신고 : 제2021-서울영등포-2467호</div>
+        <div class="footer-copyright">ⓒ OPENKNOWL</div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== Data =====
+const inquiries = [
+  { no: 9, user: "장하늘 (2201)", type: "일반", time: "2026.03.29 15:30", msg: "프로필 사진 변경이 안 돼요.", status: "미처리", date: "2026.03.29", sla: true },
+  { no: 8, user: "윤도현 (2150)", type: "기업", time: "2026.03.31 11:00", msg: "운영자 답변 후 추가 질문 드립니다.", status: "처리 중", date: "2026.03.31", tag: "" },
+  { no: 7, user: "김서연 (2048)", type: "일반", time: "2026.03.31 09:12", msg: "결제 취소가 안 돼요. 챗봇이 답변을 못해서 직접 문의합니다.", status: "미처리", date: "2026.03.31" },
+  { no: 6, user: "이준호 (1892)", type: "기업", time: "2026.03.30 17:45", msg: "기업 서비스 이용 중 오류가 발생했는데 챗봇에서 해결이 안 됩니다.", status: "미처리", date: "2026.03.30" },
+  { no: 5, user: "박지민 (1756)", type: "일반", time: "2026.03.30 14:22", msg: "이력서 작성 관련 질문인데 챗봇 답변이 부정확해요.", status: "처리 중", date: "2026.03.30", tag: "" },
+  { no: 4, user: "최윤아 (1634)", type: "일반", time: "2026.03.29 11:03", msg: "미니인턴 지원 후 결과를 어디서 확인하나요?", status: "처리 중", date: "2026.03.29", tag: "이력서" },
+  { no: 3, user: "정민수 (1520)", type: "기업", time: "2026.03.28 16:30", msg: "채용공고 등록이 안 되는데 도움 부탁드립니다.", status: "완료", date: "2026.03.28", tag: "기업 서비스" },
+  { no: 2, user: "한소희 (1403)", type: "일반", time: "2026.03.27 10:15", msg: "포트폴리오 업로드 방법을 모르겠어요.", status: "완료", date: "2026.03.27", tag: "기타", autoComplete: true },
+  { no: 1, user: "오태영 (1287)", type: "기업", time: "2026.03.26 09:40", msg: "기업회원 플랜 변경 문의입니다.", status: "완료", date: "2026.03.26", tag: "결제" },
+];
+
+const chatDefault = [
+  { s: "bot", t: "안녕하세요! 미니인턴 챗봇입니다. 무엇을 도와드릴까요?", time: "2026.03.31 09:10" },
+  { s: "user", t: "결제 취소하고 싶은데 어떻게 하나요?", time: "2026.03.31 09:11" },
+  { s: "bot", t: "결제 취소는 '마이페이지 > 결제 내역'에서 가능합니다. 결제 후 7일 이내의 건만 취소할 수 있습니다.", time: "2026.03.31 09:11" },
+  { s: "user", t: "마이페이지에서 취소 버튼이 안 보여요. 7일 안 지났는데요.", time: "2026.03.31 09:12" },
+  { s: "bot", t: "죄송해요, 해당 질문은 제가 답하기 어려운 내용이에요.", time: "2026.03.31 09:12" },
+  { s: "bot", t: "운영팀에서 직접 도움을 드릴 수 있도록 안내해드릴게요!", time: "2026.03.31 09:12" },
+  { s: "user", t: "채팅 내역 전송하기", time: "2026.03.31 09:12", esc: true },
+  { s: "bot", t: "채팅 내역이 운영팀에 전송되었습니다! 담당자가 확인 후 연락드릴게요.", time: "2026.03.31 09:12" },
+];
+
+const chatByInquiry = {
+  // #3 완료 — 운영자 답변 후 정상 완료
+  3: [
+    { s: "bot", t: "안녕하세요! 미니인턴 챗봇입니다. 무엇을 도와드릴까요?", time: "2026.03.28 16:30" },
+    { s: "user", t: "채용공고 등록이 안 돼요. 계속 오류가 나요.", time: "2026.03.28 16:30" },
+    { s: "bot", t: "채용공고 등록 시 필수 항목을 모두 입력했는지 확인해주세요. 회사 인증이 완료되지 않은 경우에도 등록이 제한될 수 있습니다.", time: "2026.03.28 16:31" },
+    { s: "user", t: "필수 항목 다 입력했고 인증도 됐는데 안 돼요.", time: "2026.03.28 16:31" },
+    { s: "bot", t: "죄송해요, 해당 질문은 제가 답하기 어려운 내용이에요.", time: "2026.03.28 16:31" },
+    { s: "bot", t: "운영팀에서 직접 도움을 드릴 수 있도록 안내해드릴게요!", time: "2026.03.28 16:31" },
+    { s: "user", t: "채팅 내역 전송하기", time: "2026.03.28 16:32", esc: true },
+    { s: "bot", t: "채팅 내역이 운영팀에 전송되었습니다! 담당자가 확인 후 연락드릴게요.", time: "2026.03.28 16:32" },
+    { s: "admin", t: "안녕하세요, 정민수님. 운영팀입니다.\n확인 결과 해당 오류는 이미지 파일 용량 초과(10MB 이상)로 인한 것으로 확인되었습니다.\n이미지를 10MB 이하로 압축 후 다시 시도해주세요.\n추가 문의 사항이 있으시면 말씀해주세요.", time: "2026.03.28 17:45" },
+  ],
+
+  // #4 처리 중 — 운영자 답변 전송 후 완료 전
+  4: [
+    { s: "bot", t: "안녕하세요! 미니인턴 챗봇입니다. 무엇을 도와드릴까요?", time: "2026.03.29 11:03" },
+    { s: "user", t: "미니인턴 지원했는데 결과를 어디서 확인하나요?", time: "2026.03.29 11:03" },
+    { s: "bot", t: "지원 결과는 '마이페이지 > 지원 현황'에서 확인 가능합니다.", time: "2026.03.29 11:04" },
+    { s: "user", t: "거기에 아무것도 안 떠요.", time: "2026.03.29 11:04" },
+    { s: "bot", t: "죄송해요, 해당 질문은 제가 답하기 어려운 내용이에요.", time: "2026.03.29 11:04" },
+    { s: "bot", t: "운영팀에서 직접 도움을 드릴 수 있도록 안내해드릴게요!", time: "2026.03.29 11:04" },
+    { s: "user", t: "채팅 내역 전송하기", time: "2026.03.29 11:05", esc: true },
+    { s: "bot", t: "채팅 내역이 운영팀에 전송되었습니다! 담당자가 확인 후 연락드릴게요.", time: "2026.03.29 11:05" },
+    { s: "admin", t: "안녕하세요, 최윤아님. 운영팀입니다.\n확인 결과 지원하신 미니인턴이 아직 모집 기간 중이라 결과가 표시되지 않는 것으로 확인됩니다.\n모집 마감(4/5) 이후 결과가 순차 공개될 예정이니 조금만 기다려주세요!", time: "2026.03.29 14:20" },
+  ],
+
+  // #5 처리 중 — 답변 작성 전 (상태만 변경)
+  5: [
+    { s: "bot", t: "안녕하세요! 미니인턴 챗봇입니다. 무엇을 도와드릴까요?", time: "2026.03.30 14:22" },
+    { s: "user", t: "이력서 작성할 때 경력 사항을 어떻게 입력하나요?", time: "2026.03.30 14:22" },
+    { s: "bot", t: "이력서 작성은 '마이페이지 > 이력서 관리'에서 가능합니다. 경력 사항은 해당 섹션에서 추가할 수 있습니다.", time: "2026.03.30 14:23" },
+    { s: "user", t: "경력 추가 버튼을 눌러도 반응이 없어요. 챗봇 답변이 부정확한 것 같아요.", time: "2026.03.30 14:23" },
+    { s: "bot", t: "죄송해요, 해당 질문은 제가 답하기 어려운 내용이에요.", time: "2026.03.30 14:23" },
+    { s: "bot", t: "운영팀에서 직접 도움을 드릴 수 있도록 안내해드릴게요!", time: "2026.03.30 14:23" },
+    { s: "user", t: "채팅 내역 전송하기", time: "2026.03.30 14:24", esc: true },
+    { s: "bot", t: "채팅 내역이 운영팀에 전송되었습니다! 담당자가 확인 후 연락드릴게요.", time: "2026.03.30 14:24" },
+  ],
+
+  // #8 처리 중 — 유저 추가 메시지 (재오픈)
+  8: [
+    { s: "bot", t: "안녕하세요! 미니인턴 챗봇입니다. 무엇을 도와드릴까요?", time: "2026.03.30 10:00" },
+    { s: "user", t: "기업 계정에서 직원 권한 설정은 어떻게 하나요?", time: "2026.03.30 10:00" },
+    { s: "bot", t: "죄송해요, 해당 질문은 제가 답하기 어려운 내용이에요.", time: "2026.03.30 10:01" },
+    { s: "bot", t: "운영팀에서 직접 도움을 드릴 수 있도록 안내해드릴게요!", time: "2026.03.30 10:01" },
+    { s: "user", t: "채팅 내역 전송하기", time: "2026.03.30 10:01", esc: true },
+    { s: "bot", t: "채팅 내역이 운영팀에 전송되었습니다! 담당자가 확인 후 연락드릴게요.", time: "2026.03.30 10:01" },
+    { s: "admin", t: "안녕하세요, 윤도현님. 운영팀입니다.\n기업 계정 > 설정 > 팀 관리에서 직원을 초대하고 권한을 설정할 수 있습니다.\n관리자/편집자/뷰어 3가지 권한이 있으며, 초대 시 선택 가능합니다.", time: "2026.03.30 11:30" },
+    { s: "user", t: "감사합니다. 그런데 추가 질문이 있어요. 권한을 나중에 변경할 수도 있나요?", time: "2026.03.31 11:00" },
+  ],
+
+  // #9 미처리 — SLA 초과 (24시간 넘김)
+  9: [
+    { s: "bot", t: "안녕하세요! 미니인턴 챗봇입니다. 무엇을 도와드릴까요?", time: "2026.03.29 15:30" },
+    { s: "user", t: "프로필 사진 변경이 안 돼요. 계속 오류가 나요.", time: "2026.03.29 15:30" },
+    { s: "bot", t: "프로필 사진은 '마이페이지 > 프로필 편집'에서 변경 가능합니다. 5MB 이하의 JPG, PNG 파일만 지원됩니다.", time: "2026.03.29 15:31" },
+    { s: "user", t: "조건 다 맞는데 업로드하면 오류가 떠요.", time: "2026.03.29 15:31" },
+    { s: "bot", t: "죄송해요, 해당 질문은 제가 답하기 어려운 내용이에요.", time: "2026.03.29 15:31" },
+    { s: "bot", t: "운영팀에서 직접 도움을 드릴 수 있도록 안내해드릴게요!", time: "2026.03.29 15:31" },
+    { s: "user", t: "채팅 내역 전송하기", time: "2026.03.29 15:32", esc: true },
+    { s: "bot", t: "채팅 내역이 운영팀에 전송되었습니다! 담당자가 확인 후 연락드릴게요.", time: "2026.03.29 15:32" },
+  ],
+
+  // #2 완료 — 48시간 자동 완료
+  2: [
+    { s: "bot", t: "안녕하세요! 미니인턴 챗봇입니다. 무엇을 도와드릴까요?", time: "2026.03.27 10:15" },
+    { s: "user", t: "포트폴리오 업로드는 어떻게 하나요?", time: "2026.03.27 10:15" },
+    { s: "bot", t: "포트폴리오는 '마이페이지 > 포트폴리오' 메뉴에서 PDF 또는 링크로 등록할 수 있습니다.", time: "2026.03.27 10:16" },
+    { s: "user", t: "PDF 업로드가 계속 실패해요.", time: "2026.03.27 10:16" },
+    { s: "bot", t: "죄송해요, 해당 질문은 제가 답하기 어려운 내용이에요.", time: "2026.03.27 10:16" },
+    { s: "bot", t: "운영팀에서 직접 도움을 드릴 수 있도록 안내해드릴게요!", time: "2026.03.27 10:16" },
+    { s: "user", t: "채팅 내역 전송하기", time: "2026.03.27 10:17", esc: true },
+    { s: "bot", t: "채팅 내역이 운영팀에 전송되었습니다! 담당자가 확인 후 연락드릴게요.", time: "2026.03.27 10:17" },
+    { s: "admin", t: "안녕하세요, 한소희님. 운영팀입니다.\nPDF 파일 용량이 20MB를 초과하면 업로드가 실패할 수 있습니다.\n파일 크기를 확인해주시고, 20MB 이하로 압축 후 다시 시도해주세요.", time: "2026.03.27 13:40" },
+    { s: "system", t: "유저의 48시간 내 재문의가 없어 자동으로 완료 처리되었습니다.", time: "2026.03.29 13:40" },
+  ],
+};
+
+// ===== Render Table =====
+function renderTable(filter = 'all') {
+  const filtered = filter === 'all' ? inquiries : inquiries.filter(i => i.status === filter);
+  const body = document.getElementById('tableBody');
+  body.innerHTML = filtered.map(i => {
+    const badgeClass = i.status === '미처리' ? 'badge-red' : i.status === '처리 중' ? 'badge-blue' : 'badge-green';
+    return `<div class="table-row" onclick="openDetail(${i.no})">
+      <div class="cell cell-no">${i.no}</div>
+      <div class="cell cell-user">${i.user}</div>
+      <div class="cell cell-type">${i.type}</div>
+      <div class="cell cell-time">${i.time}</div>
+      <div class="cell cell-msg">${i.msg}</div>
+      <div class="cell cell-status"><span class="badge ${badgeClass}">${i.status}</span></div>
+      <div class="cell cell-date">${i.date}</div>
+    </div>`;
+  }).join('');
+}
+
+// ===== Filter Dropdown =====
+function toggleFilter() {
+  const btn = document.querySelector('.filter-btn');
+  const list = document.getElementById('filterList');
+  btn.classList.toggle('open');
+  list.classList.toggle('show');
+}
+
+document.getElementById('filterList').addEventListener('click', e => {
+  const item = e.target.closest('.filter-item');
+  if (!item) return;
+  document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
+  item.classList.add('active');
+  document.getElementById('filterLabel').textContent = item.textContent;
+  document.querySelector('.filter-btn').classList.remove('open');
+  document.getElementById('filterList').classList.remove('show');
+  renderTable(item.dataset.filter);
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.filter-dropdown')) {
+    document.querySelector('.filter-btn')?.classList.remove('open');
+    document.getElementById('filterList')?.classList.remove('show');
+  }
+});
+
+// ===== Render Chat =====
+function renderChat(messages, userName) {
+  const container = document.getElementById('chatContainer');
+  container.innerHTML = messages.map(m => {
+    if (m.s === 'system') {
+      return `<div class="msg system"><div class="bubble">${m.t}</div></div>`;
+    }
+    const isAdmin = m.s === 'admin';
+    const cls = isAdmin ? 'msg bot admin' : (m.s === 'user' ? 'msg user' : 'msg bot');
+    const escCls = m.esc ? ' escalation' : '';
+    const sender = isAdmin ? '운영자' : (m.s === 'bot' ? '챗봇' : userName);
+    const escLabel = m.esc ? '<div class="esc-label">⚠ 채팅 내역 전송 요청</div>' : '';
+    const text = m.t.replace(/\n/g, '<br>');
+    return `<div class="${cls}${escCls}">
+      ${escLabel}
+      <div class="sender">${sender}</div>
+      <div class="bubble">${text}</div>
+      <div class="time">${m.time}</div>
+    </div>`;
+  }).join('');
+}
+
+// ===== Navigation =====
+function showPage(page, pushState = true) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+  window.scrollTo(0, 0);
+  if (pushState) history.pushState({ page }, '', `#${page}`);
+}
+
+window.addEventListener('popstate', e => {
+  const page = e.state?.page || 'list';
+  showPage(page, false);
+});
+
+history.replaceState({ page: 'list' }, '', '#list');
+
+function openDetail(no) {
+  const item = inquiries.find(i => i.no === no);
+  if (!item) return;
+
+  document.getElementById('detailUser').textContent = item.user;
+  document.getElementById('detailType').textContent = item.type;
+  document.getElementById('detailTime').textContent = item.time;
+
+  const badge = document.getElementById('detailBadge');
+  badge.textContent = item.status;
+  badge.className = 'badge info-status ' + (item.status === '미처리' ? 'badge-red' : item.status === '처리 중' ? 'badge-blue' : 'badge-green');
+
+  // SLA warning
+  const slaEl = document.getElementById('slaWarning');
+  if (item.sla) {
+    slaEl.innerHTML = '<div class="sla-warning"><span class="icon">⚠</span>인입 후 24시간이 경과했습니다. 빠른 응대가 필요합니다.</div>';
+  } else {
+    slaEl.innerHTML = '';
+  }
+
+  const isComplete = item.status === '완료';
+  const tagValue = item.tag || '';
+
+  const panel = document.getElementById('actionPanel');
+  if (isComplete) {
+    panel.innerHTML = `
+      <div class="panel-section">
+        <div class="panel-label">처리 상태</div>
+        <select class="select-box" id="statusSelect" onchange="onFieldChange()">
+          <option value="미처리">미처리</option>
+          <option value="처리 중">처리 중</option>
+          <option value="완료" selected>완료</option>
+        </select>
+      </div>
+      <div class="panel-section">
+        <div class="panel-label">문의 유형</div>
+        <select class="select-box" id="tagSelect" onchange="onFieldChange()">
+          <option value="">유형 선택</option>
+          <option value="결제"${tagValue==='결제'?' selected':''}>결제</option>
+          <option value="이력서"${tagValue==='이력서'?' selected':''}>이력서</option>
+          <option value="기업 서비스"${tagValue==='기업 서비스'?' selected':''}>기업 서비스</option>
+          <option value="기타"${tagValue==='기타'?' selected':''}>기타</option>
+        </select>
+      </div>
+      <div class="panel-section">
+        <div class="panel-label">운영자 답변</div>
+        <div class="reply-complete">
+          <div class="check">✓ 답변 완료</div>
+          처리가 완료된 문의입니다
+        </div>
+      </div>
+      <div class="panel-section panel-actions" style="border-top:none;padding-top:0">
+        <button class="btn-save" id="btnSave" onclick="saveChanges()" disabled>저장</button>
+      </div>`;
+  } else {
+    panel.innerHTML = `
+      <div class="panel-section">
+        <div class="panel-label">처리 상태</div>
+        <select class="select-box" id="statusSelect" onchange="onFieldChange()">
+          <option value="미처리"${item.status==='미처리'?' selected':''}>미처리</option>
+          <option value="처리 중"${item.status==='처리 중'?' selected':''}>처리 중</option>
+          <option value="완료"${item.status==='완료'?' selected':''}>완료</option>
+        </select>
+      </div>
+      <div class="panel-section">
+        <div class="panel-label">문의 유형</div>
+        <select class="select-box" id="tagSelect" onchange="onFieldChange()">
+          <option value="">유형 선택</option>
+          <option value="결제"${tagValue==='결제'?' selected':''}>결제</option>
+          <option value="이력서"${tagValue==='이력서'?' selected':''}>이력서</option>
+          <option value="기업 서비스"${tagValue==='기업 서비스'?' selected':''}>기업 서비스</option>
+          <option value="기타"${tagValue==='기타'?' selected':''}>기타</option>
+        </select>
+      </div>
+      <div class="panel-section">
+        <div class="panel-label">운영자 답변</div>
+        <textarea class="textarea" id="replyText" placeholder="답변을 작성해주세요..." oninput="onFieldChange()"></textarea>
+      </div>
+      <div class="panel-section panel-actions" style="border-top:none;padding-top:0">
+        <button class="btn-save" id="btnSave" onclick="saveChanges()" disabled>저장</button>
+      </div>`;
+  }
+
+  const userName = item.user.split(' ')[0];
+  const messages = chatByInquiry[no] || chatDefault;
+  renderChat(messages, userName);
+  showPage('detail');
+  setTimeout(captureInitialState, 0);
+}
+
+// ===== Actions =====
+let initialState = {};
+
+function captureInitialState() {
+  initialState = {
+    status: document.getElementById('statusSelect')?.value || '',
+    tag: document.getElementById('tagSelect')?.value || '',
+    reply: document.getElementById('replyText')?.value || '',
+  };
+}
+
+function onFieldChange() {
+  const btn = document.getElementById('btnSave');
+  if (!btn) return;
+  const current = {
+    status: document.getElementById('statusSelect')?.value || '',
+    tag: document.getElementById('tagSelect')?.value || '',
+    reply: document.getElementById('replyText')?.value || '',
+  };
+  const changed = current.status !== initialState.status
+    || current.tag !== initialState.tag
+    || current.reply !== initialState.reply;
+  btn.disabled = !changed;
+  btn.classList.toggle('active', changed);
+}
+
+function saveChanges() {
+  const btn = document.getElementById('btnSave');
+  if (btn.disabled) return;
+
+  const val = document.getElementById('statusSelect').value;
+  const badge = document.getElementById('detailBadge');
+  badge.textContent = val;
+  badge.className = 'badge info-status ' + (val === '미처리' ? 'badge-red' : val === '처리 중' ? 'badge-blue' : 'badge-green');
+
+  const textarea = document.getElementById('replyText');
+  const text = textarea?.value.trim();
+  if (text) {
+    const container = document.getElementById('chatContainer');
+    const replyHtml = `<div class="msg bot admin" style="animation:fadeIn 0.3s ease">
+      <div class="sender">운영자</div>
+      <div class="bubble">${text.replace(/\n/g, '<br>')}</div>
+      <div class="time">방금 전</div>
+    </div>`;
+    container.insertAdjacentHTML('beforeend', replyHtml);
+    container.scrollTop = container.scrollHeight;
+    textarea.value = '';
+  }
+
+  captureInitialState();
+  btn.disabled = true;
+  btn.classList.remove('active');
+  showToast('변경사항이 저장되었습니다');
+}
+
+// ===== Toast =====
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ===== Init =====
+renderTable();
+</script>
+
+</body>
+</html>
