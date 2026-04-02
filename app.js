@@ -16,6 +16,22 @@ let pendingLoginQuestion = null;  // 로그인 후 답변할 질문 저장
 let freeInputCount = 0;  // 자유 입력 횟수 (일일 최대 5회)
 const FREE_INPUT_LIMIT = 5;
 
+// ===== Toast =====
+const toastEl = document.getElementById('toast');
+let toastTimer = null;
+
+function showToast(msg, duration = 3000) {
+  if (!toastEl) return;
+  toastEl.textContent = msg || '일시적으로 오류가 생겼어요. 다시 시도해 주세요.';
+  toastEl.classList.remove('hide');
+  toastEl.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toastEl.classList.remove('show');
+    toastEl.classList.add('hide');
+  }, duration);
+}
+
 // ===== Input bar show/hide =====
 const inputBarWrap = document.querySelector('.input-bar-wrap');
 const inputError = document.getElementById('inputError');
@@ -80,6 +96,23 @@ function handleInputKeydown(e) {
     sendMessage();
   }
 }
+
+// =============================================================
+//  동적 정보 조회 — 사용자 참여 미니인턴 목록 (Mock)
+//  ※ 실제 서비스에서는 로그인 유저의 참여 프로그램을 API로 조회
+//    종료된 미니인턴은 제외
+// =============================================================
+const USER_PROGRAMS = [
+  { id: 1, title: '피그마를 활용한 브랜드 경험 강화 UX/UI 개선 프로젝트', status: 'active', submissionDeadline: '4월 4일(금)', feedbackDate: '3월 28일(금)', resultDate: '3월 21일(금)' },
+  { id: 2, title: "업사이클링 기반 펫패션 브랜드 '스윗푸딩' CI·캐릭터 디자인", status: 'active', submissionDeadline: '4월 11일(금)', feedbackDate: '4월 4일(금)', resultDate: '3월 28일(금)' },
+  { id: 3, title: '마케팅 전문 뉴스레터<위픽레터> 콘텐츠 기획 및 제작', status: 'active', submissionDeadline: '4월 18일(금)', feedbackDate: '4월 11일(금)', resultDate: '4월 4일(금)' }
+];
+
+function getActivePrograms() {
+  return USER_PROGRAMS.filter(p => p.status === 'active');
+}
+
+let pendingDynamicField = null; // 'submissionDeadline' | 'feedbackDate' | 'resultDate'
 
 // =============================================================
 //  FAQ Tree — 시나리오 기반 데이터
@@ -185,27 +218,33 @@ const FAQ_TREE = {
       '일정': {
         questions: [
           {
-            // ※ 동적 정보: {제출마감일} → 실제 서비스에서는 API 조회 필요
+            // ※ 동적 정보: {제출마감일} → 미니인턴 선택 후 조회
             question: '최종 결과물 제출 기한이 언제예요?',
-            answerType: 'dynamic',
-            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>최종 결과물 제출 기한은 <b>3월 28일(금)</b> 오후 6시까지입니다.<br>기한 내 제출 부탁드립니다!<br><br>감사합니다.',
-            devComment: '[동적 정보] 실제 값은 어드민 API에서 기수별 "제출마감일" 필드를 조회하여 삽입. 포맷: M월 D일(요일)',
+            answerType: 'dynamic-select',
+            dynamicField: 'submissionDeadline',
+            promptMsg: '어떤 미니인턴의 일정이 궁금하신가요?',
+            answerTemplate: (program) => `${program.title}의 최종 결과물 제출 기한은 <b>${program.submissionDeadline}</b> 오후 6시까지입니다.<br>기한 내 제출 부탁드립니다!`,
+            singleAnswerTemplate: (program) => `[${program.title}]을 진행하고 계시네요! 해당 미니인턴의 최종 결과물 제출 기한은 <b>${program.submissionDeadline}</b> 오후 6시까지입니다.<br>기한 내 제출 부탁드립니다!`,
             keywords: ['제출', '기한', '마감', '최종', '언제']
           },
           {
-            // ※ 동적 정보: {중간피드백일} → 실제 서비스에서는 API 조회 필요
+            // ※ 동적 정보: {중간피드백일} → 미니인턴 선택 후 조회
             question: '중간 피드백은 언제 올라오나요?',
-            answerType: 'dynamic',
-            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>중간 피드백은 <b>3월 21일(금)</b> 오후 6시 이전 업로드 예정이며, 업로드 후 추가로 안내 연락을 드리고 있으니 참고 부탁드립니다.<br><br>감사합니다.',
-            devComment: '[동적 정보] 실제 값은 어드민 API에서 기수별 "중간피드백일" 필드를 조회하여 삽입. 포맷: M월 D일(요일)',
+            answerType: 'dynamic-select',
+            dynamicField: 'feedbackDate',
+            promptMsg: '어떤 미니인턴의 일정이 궁금하신가요?',
+            answerTemplate: (program) => `${program.title}의 중간 피드백은 <b>${program.feedbackDate}</b> 오후 6시 이전 업로드 예정이며, 업로드 후 추가로 안내 연락을 드리고 있으니 참고 부탁드립니다.`,
+            singleAnswerTemplate: (program) => `[${program.title}]을 진행하고 계시네요! 해당 미니인턴의 중간 피드백은 <b>${program.feedbackDate}</b> 오후 6시 이전 업로드 예정이며, 업로드 후 추가로 안내 연락을 드리고 있으니 참고 부탁드립니다.`,
             keywords: ['중간', '피드백', '멘토링']
           },
           {
-            // ※ 동적 정보: {결과발표일} → 실제 서비스에서는 API 조회 필요
+            // ※ 동적 정보: {결과발표일} → 미니인턴 선택 후 조회
             question: '선발 결과는 언제 알 수 있나요?',
-            answerType: 'dynamic',
-            answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>선발 결과는 <b>3월 14일(금)</b> 오후 6시 이전에 개별적으로 안내드리고 있습니다.<br>미선발의 경우에도 개별적으로 연락드리고 있으니, 참고 부탁드립니다!<br><br>감사합니다.',
-            devComment: '[동적 정보] 실제 값은 어드민 API에서 기수별 "결과발표일" 필드를 조회하여 삽입. 포맷: M월 D일(요일)',
+            answerType: 'dynamic-select',
+            dynamicField: 'resultDate',
+            promptMsg: '어떤 미니인턴의 일정이 궁금하신가요?',
+            answerTemplate: (program) => `${program.title}의 선발 결과는 <b>${program.resultDate}</b> 오후 6시 이전에 개별적으로 안내드리고 있습니다.<br>미선발의 경우에도 개별적으로 연락드리고 있으니, 참고 부탁드립니다!`,
+            singleAnswerTemplate: (program) => `[${program.title}]을 진행하고 계시네요! 해당 미니인턴의 선발 결과는 <b>${program.resultDate}</b> 오후 6시 이전에 개별적으로 안내드리고 있습니다.<br>미선발의 경우에도 개별적으로 연락드리고 있으니, 참고 부탁드립니다!`,
             keywords: ['선발', '결과', '합격', '발표']
           }
         ]
@@ -246,6 +285,7 @@ const FAQ_TREE = {
             question: '구매한 콘텐츠 다운로드가 안 돼요',
             requiresLogin: true,
             answerType: 'contact',
+            contactEmail: 'mkt@openknowl.com',
             answer: '안녕하세요, 미니인턴 운영팀입니다 :)<br><br>다운로드가 원활하지 않다면 아래를 시도해 주세요.<br><br>• <b>PDF 파일이 열리지 않는 경우</b><br>기기에 PDF 뷰어(Adobe Acrobat Reader, Chrome 등)가 설치되어 있는지 확인해 주세요.<br><br>• <b>일반 다운로드 오류</b><br>다른 브라우저에서 재시도 / 캐시 삭제 후 재시도<br><br>• <b>카카오톡·SNS 앱 내 다운로드 시 파일이 안 보이는 경우</b><br>링크를 복사하여 Chrome, Safari 등 웹 브라우저에서 열어서 다운로드를 재시도해 주세요.<br><br>문제가 지속되면 아래 채널로 문의해 주세요.',
             keywords: ['다운로드', '오류', '안돼', '안 돼', '열리지']
           }
@@ -502,17 +542,24 @@ function addDevComment(comment) {
 }
 
 // ===== Unified Answer Renderer =====
+// returns true if post-answer chips should be deferred (e.g. dynamic-select)
 async function renderAnswer(questionObj, showThinking = false) {
+  // dynamic-select는 답변 대신 미니인턴 선택 플로우 시작
+  if (questionObj.answerType === 'dynamic-select') {
+    await startDynamicSelect(questionObj, showThinking);
+    return true; // showPostAnswerChips는 선택 완료 후 호출
+  }
+
   if (questionObj.answerType === 'image') {
     await addBotMsgWithImage(questionObj.answer, questionObj.imagePlaceholder, questionObj.imageSrc || null, 600, showThinking);
+  } else if (questionObj.answerType === 'contact') {
+    const email = questionObj.contactEmail || 'help@miniintern.com';
+    await addBotMsgWithContact(questionObj.answer, email, 600, showThinking);
   } else {
     await addBotMsg(questionObj.answer, 600, showThinking);
   }
 
   switch (questionObj.answerType) {
-    case 'contact':
-      addContactCard();
-      break;
     case 'dynamic':
       // devComment는 개발 문서 참고용 — 챗봇 UI에는 출력하지 않음
       break;
@@ -656,6 +703,100 @@ function addContactCard() {
   scrollBottom();
 }
 
+// ===== Bot message with inline contact =====
+function addBotMsgWithContact(text, email, delay = 600, showThinking = false) {
+  const contactHTML = `
+    <div class="inline-contact">
+      <div class="inline-contact-chip" onclick="copyContact('${email}', this)">
+        <div class="inline-contact-left">
+          <div class="inline-contact-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </div>
+          <span class="inline-contact-email">${email}</span>
+        </div>
+        <div class="inline-contact-copy">
+          <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+    </div>`;
+  const fullHTML = text + contactHTML;
+
+  return new Promise(resolve => {
+    if (!showThinking) {
+      const loader = document.createElement('div');
+      loader.className = 'msg-row';
+      loader.innerHTML = `
+        <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+        <div class="msg-bubble bot loading-bubble">
+          <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
+        </div>`;
+      chatBody.appendChild(loader);
+      scrollBottom();
+
+      setTimeout(() => {
+        loader.remove();
+        const row = document.createElement('div');
+        row.className = 'msg-row';
+        row.innerHTML = `
+          <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+          <div class="msg-bubble bot">${fullHTML}</div>`;
+        chatBody.appendChild(row);
+        messageLog.push({ type: 'bot', text });
+        scrollBottom();
+        resolve();
+      }, delay);
+      return;
+    }
+
+    const typing = document.createElement('div');
+    typing.className = 'msg-row';
+    typing.innerHTML = `
+      <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+      <div class="thinking-indicator">
+        <div class="thinking-step active">
+          <span class="step-text">${THINKING_STEPS[0]}</span>
+          <div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>
+        </div>
+      </div>`;
+    chatBody.appendChild(typing);
+    scrollBottom();
+
+    const stepEl = typing.querySelector('.thinking-step');
+    const textEl = stepEl.querySelector('.step-text');
+    let step = 0;
+    const stepInterval = setInterval(() => {
+      step++;
+      if (step < THINKING_STEPS.length) {
+        stepEl.classList.remove('active');
+        stepEl.classList.add('done');
+        setTimeout(() => {
+          stepEl.classList.remove('done');
+          stepEl.classList.add('active');
+          textEl.textContent = THINKING_STEPS[step];
+        }, 500);
+      } else {
+        clearInterval(stepInterval);
+        stepEl.classList.remove('active');
+        stepEl.classList.add('done');
+      }
+    }, 1000);
+
+    setTimeout(() => {
+      typing.remove();
+      const row = document.createElement('div');
+      row.className = 'msg-row';
+      row.innerHTML = `
+        <div class="msg-avatar"><img src="./mi-bot.svg" width="28" height="28" style="border-radius:50%;"></div>
+        <div class="msg-bubble bot">${fullHTML}</div>`;
+      chatBody.appendChild(row);
+      messageLog.push({ type: 'bot', text });
+      scrollBottom();
+      resolve();
+    }, 3500);
+  });
+}
+
 // ===== Image Viewer =====
 function openImageViewer(src) {
   const viewer = document.createElement('div');
@@ -683,6 +824,13 @@ function copyText(text, el) {
         valueEl.classList.remove('copied');
       }, 1500);
     }
+  });
+}
+
+function copyContact(text, el) {
+  navigator.clipboard.writeText(text).then(() => {
+    el.classList.add('copied');
+    setTimeout(() => el.classList.remove('copied'), 2000);
   });
 }
 
@@ -737,7 +885,8 @@ async function handleLogin() {
   if (pendingLoginQuestion) {
     const q = pendingLoginQuestion;
     pendingLoginQuestion = null;
-    await renderAnswer(q);
+    const deferred = await renderAnswer(q);
+    if (deferred) return;
   }
   showPostAnswerChips();
 }
@@ -845,8 +994,8 @@ async function handleQuestionSelect(questionText) {
   // Find the question object in the tree
   const qObj = qObjCheck;
   if (qObj) {
-    await renderAnswer(qObj);
-    showPostAnswerChips();
+    const deferred = await renderAnswer(qObj);
+    if (!deferred) showPostAnswerChips();
   } else {
     await addBotMsg('죄송해요, 해당 질문을 찾을 수 없어요.');
     showPostAnswerChips();
@@ -862,6 +1011,51 @@ function findQuestionObj(questionText) {
     }
   }
   return null;
+}
+
+// ===== 동적 정보 조회: 미니인턴 선택 플로우 =====
+async function startDynamicSelect(questionObj, showThinking = false) {
+  const programs = getActivePrograms();
+
+  // 참여 중인 미니인턴 없음
+  if (programs.length === 0) {
+    await addBotMsg('현재 참여 중인 미니인턴이 없습니다.', 600, showThinking);
+    showPostAnswerChips();
+    return;
+  }
+
+  // 1개만 참여 중 → 바로 답변
+  if (programs.length === 1) {
+    const answer = questionObj.singleAnswerTemplate(programs[0]);
+    await addBotMsg(answer, 600, showThinking);
+    showPostAnswerChips();
+    return;
+  }
+
+  // 2개 이상 → 선택 플로우
+  await addBotMsg(questionObj.promptMsg, 600, showThinking);
+
+  const listHTML = `<div class="program-list-label">김민이님이 참여중인 미니인턴</div>
+    <ul class="program-list">${programs.map(p => `<li>${p.title}</li>`).join('')}</ul>`;
+  await addBotMsg(listHTML, 400);
+
+  const titles = programs.map(p => p.title);
+  pendingDynamicField = questionObj.dynamicField;
+  addQuickReplies(titles, (selectedTitle) => handleProgramSelect(selectedTitle, questionObj));
+}
+
+async function handleProgramSelect(selectedTitle, questionObj) {
+  const program = getActivePrograms().find(p => p.title === selectedTitle);
+  if (!program) {
+    await addBotMsg('선택한 미니인턴을 찾을 수 없습니다.');
+    showPostAnswerChips();
+    return;
+  }
+
+  const answer = questionObj.answerTemplate(program);
+  await addBotMsg(answer);
+  pendingDynamicField = null;
+  showPostAnswerChips();
 }
 
 function showPostAnswerChips() {
@@ -971,6 +1165,27 @@ async function sendMessage() {
     return;
   }
 
+  // 동적 정보 조회 테스트 커맨드 (최종0, 최종1, 최종2)
+  const dynamicTestMatch = text.match(/^최종(\d)$/);
+  if (dynamicTestMatch) {
+    const count = parseInt(dynamicTestMatch[1]);
+    const submissionQ = findQuestionObj('최종 결과물 제출 기한이 언제예요?');
+    if (submissionQ) {
+      const originalPrograms = [...USER_PROGRAMS];
+      // 임시로 프로그램 수 조정
+      if (count === 0) {
+        USER_PROGRAMS.forEach(p => p.status = 'ended');
+      } else if (count === 1) {
+        USER_PROGRAMS.forEach((p, i) => p.status = i === 0 ? 'active' : 'ended');
+      }
+      // count >= 2는 원본 그대로 사용
+      await renderAnswer(submissionQ, true);
+      // 원복
+      originalPrograms.forEach((p, i) => { USER_PROGRAMS[i].status = p.status; });
+      return;
+    }
+  }
+
   // 채팅 종료 트리거 (프로토타입 테스트용)
   if (text === '채팅 종료') {
     hideInput();
@@ -1023,6 +1238,13 @@ async function sendMessage() {
 
   hideInput();
 
+  // 에러 토스트 테스트 트리거
+  if (text.replace(/\s/g, '').toLowerCase() === '에러테스트') {
+    showToast();
+    showInput();
+    return;
+  }
+
   // CS 테스트 트리거
   if (text.replace(/\s/g, '').toLowerCase() === 'cs테스트') {
     await addBotMsg('죄송해요, 해당 질문은 제가 답변하기 어려운 내용이에요.', 600, true);
@@ -1037,7 +1259,8 @@ async function sendMessage() {
   // Keyword search across entire tree
   const faq = findFaqAnswer(text);
   if (faq) {
-    await renderAnswer(faq, true);
+    const deferred = await renderAnswer(faq, true);
+    if (deferred) return; // dynamic-select 등 후속 플로우가 chips 관리
   } else {
     const fallback = getFallbackAnswer(text);
     await addBotMsg(fallback, 600, true);
@@ -1049,7 +1272,8 @@ async function sendMessage() {
 async function handleUserInput(text, showThinking = false) {
   const faq = findFaqAnswer(text);
   if (faq) {
-    await renderAnswer(faq, showThinking);
+    const deferred = await renderAnswer(faq, showThinking);
+    if (deferred) return;
   } else {
     const fallback = getFallbackAnswer(text);
     await addBotMsg(fallback, 600, showThinking);

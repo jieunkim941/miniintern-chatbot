@@ -15,6 +15,7 @@
   <div class="bg-trigger-info">
     <p>테스트 트리거 (직접 입력 모드에서 입력)</p>
     <p>• "로그인" → 로그인/비로그인 상태 토글</p>
+    <p>• "에러테스트" → 에러 토스트 노출</p>
     <p>• "cs테스트" → CS 핸드오프 카드 노출</p>
     <p>• "채팅 종료" → 대화 종료 처리</p>
   </div>
@@ -46,6 +47,7 @@
 
   <!-- Input Bar -->
   <div class="input-bar-wrap">
+    <div class="toast" id="toast"></div>
     <div class="input-container" id="inputContainer">
       <textarea class="input-field" id="inputField" rows="1" placeholder="메시지를 입력해 주세요."
         onkeydown="handleInputKeydown(event)"
